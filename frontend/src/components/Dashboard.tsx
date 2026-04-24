@@ -8,20 +8,42 @@ import MapTab from './MapTab';
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState<'table' | 'map'>('table');
   const [stats, setStats] = useState<any>(null);
+  const [globalStates, setGlobalStates] = useState<any[]>([]);
   const [loadingStats, setLoadingStats] = useState(true);
 
+  // Filtros globales
+  const [search, setSearch] = useState('');
+  const [stateFilter, setStateFilter] = useState('');
+  const [sectorFilter, setSectorFilter] = useState('');
+
+  // Fetch initial global states for the dropdown
   useEffect(() => {
     fetch('/api/stats')
       .then(res => res.json())
       .then(data => {
-        setStats(data);
-        setLoadingStats(false);
+        setGlobalStates(data.topStates || []);
       })
-      .catch(err => {
-        console.error(err);
-        setLoadingStats(false);
-      });
+      .catch(console.error);
   }, []);
+
+  // Fetch dynamic stats based on filters
+  useEffect(() => {
+    setLoadingStats(true);
+    const timer = setTimeout(() => {
+      fetch(`/api/stats?search=${encodeURIComponent(search)}&state=${encodeURIComponent(stateFilter)}&sector=${encodeURIComponent(sectorFilter)}`)
+        .then(res => res.json())
+        .then(data => {
+          setStats(data);
+          setLoadingStats(false);
+        })
+        .catch(err => {
+          console.error(err);
+          setLoadingStats(false);
+        });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [search, stateFilter, sectorFilter]);
 
   return (
     <div className="space-y-6">
@@ -44,9 +66,9 @@ export default function Dashboard() {
             <MapPin size={28} />
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Estado Principal</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Estado</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white truncate">
-              {loadingStats ? '...' : stats?.topStates[0]?.name || 'N/A'}
+              {loadingStats ? '...' : (stateFilter ? globalStates.find(s => s.rawName === stateFilter)?.name : stats?.topStates?.[0]?.name) || 'N/A'}
             </p>
           </div>
         </div>
@@ -56,10 +78,59 @@ export default function Dashboard() {
             <Activity size={28} />
           </div>
           <div className="flex-1 overflow-hidden">
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría Top</p>
-            <p className="text-sm font-bold text-gray-900 dark:text-white truncate" title={stats?.topCategories[0]?.name}>
-              {loadingStats ? '...' : stats?.topCategories[0]?.name || 'N/A'}
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría</p>
+            <p className="text-sm font-bold text-gray-900 dark:text-white truncate" title={sectorFilter || stats?.topCategories?.[0]?.name}>
+              {loadingStats ? '...' : sectorFilter || stats?.topCategories?.[0]?.name || 'N/A'}
             </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Global Filters */}
+      <div className="bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row gap-4">
+        <div className="relative flex-1">
+          <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+          <input
+            type="text"
+            placeholder="Buscar por nombre o municipio..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
+          />
+        </div>
+        <div className="flex gap-4 w-full md:w-auto">
+          <div className="relative w-full md:w-48">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <select
+              value={sectorFilter}
+              onChange={(e) => setSectorFilter(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none text-sm cursor-pointer"
+            >
+              <option value="">Todos los Sectores</option>
+              <option value="Alimentos y Abarrotes">Alimentos y Abarrotes</option>
+              <option value="Moda y Vestimenta">Moda y Vestimenta</option>
+              <option value="Salud y Bienestar">Salud y Bienestar</option>
+              <option value="Automotriz y Transporte">Automotriz y Transporte</option>
+              <option value="Ferretería y Construcción">Ferretería y Construcción</option>
+              <option value="Hogar y Decoración">Hogar y Decoración</option>
+              <option value="Tecnología y Electrónica">Tecnología y Electrónica</option>
+              <option value="Entretenimiento y Deportes">Entretenimiento y Deportes</option>
+              <option value="Papelería y Regalos">Papelería y Regalos</option>
+              <option value="Otros Comercios">Otros Comercios</option>
+            </select>
+          </div>
+          <div className="relative w-full md:w-48">
+            <svg className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-[18px] h-[18px]" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon></svg>
+            <select
+              value={stateFilter}
+              onChange={(e) => setStateFilter(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none text-sm cursor-pointer"
+            >
+              <option value="">Todos los Estados</option>
+              {globalStates.map((s, i) => (
+                <option key={i} value={s.rawName}>{s.name}</option>
+              ))}
+            </select>
           </div>
         </div>
       </div>
@@ -93,9 +164,9 @@ export default function Dashboard() {
 
         <div className="p-6">
           {activeTab === 'table' ? (
-            <TableTab topStates={stats?.topStates || []} />
+            <TableTab search={search} stateFilter={stateFilter} sectorFilter={sectorFilter} />
           ) : (
-            <MapTab topStates={stats?.topStates || []} />
+            <MapTab search={search} stateFilter={stateFilter} sectorFilter={sectorFilter} />
           )}
         </div>
       </div>

@@ -1,31 +1,21 @@
-# Requisitos del Sistema y Dependencias
+# Instalador Automatizado
 
-Para ejecutar los tres módulos del proyecto (Backend de envío, Importador de CSV y Frontend), asegúrate de cumplir con los siguientes requisitos:
+Para instalar todas las bibliotecas y dependencias de este proyecto, simplemente ejecuta el archivo:
 
-## Entorno de Ejecución
-- Node.js >= 18.x
-- NPM >= 9.x
-- TypeScript >= 5.x
+> **setup.bat**
 
-## Infraestructura
-- Servidor PostgreSQL (Acceso remoto o local) configurado con capacidades para soportar millones de registros.
-- Servidor SMTP (Gmail con contraseñas de aplicación habilitadas o servicio similar).
-- (Opcional) Vercel u otra plataforma similar para hospedar el directorio Frontend.
+### ¿Qué hace este instalador?
+1. **Verifica** que tengas Node.js instalado.
+2. **Instala** las dependencias del Backend (Nodemailer, PG, etc.).
+3. **Instala** las dependencias del Frontend (Next.js, Tailwind, etc.).
+4. **Configura** los archivos `.env` y `.env.local` con valores por defecto para que puedas empezar rápido.
 
-## Dependencias - Backend (`/backend/`)
-Se instalan con `npm install` en la carpeta `backend/`:
-- dotenv (Manejo de variables de entorno)
-- nodemailer (Envío de correos electrónicos)
-- pg (Cliente para PostgreSQL)
-- csv-parser (Lectura por flujos de archivos CSV de gran tamaño)
-- iconv-lite (Conversión de codificación de caracteres ISO-8859-1 a UTF-8)
-- ts-node (Ejecución de TypeScript)
+### Requisitos Manuales
+Después de correr el instalador, asegúrate de:
+- Tener una base de datos **PostgreSQL** corriendo.
+- Editar los archivos `.env` con tus credenciales de base de datos y correo.
 
-## Dependencias - Frontend Web (`/frontend/`)
-Se instalan con `npm install` dentro de la subcarpeta `frontend/`:
-- next (Framework React)
-- react & react-dom
-- tailwindcss (Framework de estilos)
-- lucide-react (Librería de iconos)
-- leaflet & react-leaflet (Mapas interactivos)
-- pg (Conexión a BD desde las API Routes de Next.js)
+### Comandos de ejecución rápida
+- **Frontend**: `cd frontend && npm run dev`
+- **Backend**: `cd backend && npm run dev`
+- **Importador**: `cd backend && npx ts-node scripts/import_inegi_csv.ts`

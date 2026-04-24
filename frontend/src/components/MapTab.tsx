@@ -1,7 +1,7 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Filter } from 'lucide-react';
 
 // Carga dinámica de Leaflet para evitar el error de "window is not defined" en SSR de Next.js
@@ -17,29 +17,65 @@ const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ),
 });
 
-export default function MapTab({ topStates }: { topStates: any[] }) {
-  const [stateFilter, setStateFilter] = useState('');
+export default function MapTab({ search, stateFilter, sectorFilter }: { search: string; stateFilter: string; sectorFilter: string }) {
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    // Cuando cambian los filtros, volvemos al lote 1 y consultamos cuántos lotes hay
+    setPage(1);
+    setLoading(true);
+    fetch(`/api/locations?map=true&page=1&limit=100&search=${encodeURIComponent(search)}&state=${encodeURIComponent(stateFilter)}&sector=${encodeURIComponent(sectorFilter)}`)
+      .then(res => res.json())
+      .then(json => {
+        setTotalPages(json.totalPages || 1);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setLoading(false);
+      });
+  }, [search, stateFilter, sectorFilter]);
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
-        <div className="relative w-full md:w-64">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <select
-            value={stateFilter}
-            onChange={(e) => setStateFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none text-sm cursor-pointer"
-          >
-            <option value="">Todos los Estados (Límite 1000 pts)</option>
-            {topStates.map((s, i) => (
-              <option key={i} value={s.name}>{s.name}</option>
-            ))}
-          </select>
+      {totalPages > 0 && (
+        <div className="flex flex-col sm:flex-row justify-between items-center text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-lg border border-gray-100 dark:border-gray-700">
+          <p>
+            Mostrando <strong>Lote {page}</strong> de {totalPages} (Máx 100 pines por lote)
+          </p>
+          <div className="flex gap-2 mt-2 sm:mt-0">
+            <button
+              onClick={() => setPage(p => Math.max(1, p - 1))}
+              disabled={page === 1 || loading}
+              className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            >
+              Anterior
+            </button>
+            <select
+              value={page}
+              onChange={(e) => setPage(Number(e.target.value))}
+              disabled={loading}
+              className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors cursor-pointer"
+            >
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(p => (
+                <option key={p} value={p}>Lote {p}</option>
+              ))}
+            </select>
+            <button
+              onClick={() => setPage(p => Math.min(totalPages, p + 1))}
+              disabled={page === totalPages || loading}
+              className="px-3 py-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50 transition-colors"
+            >
+              Siguiente
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       
       <div className="rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 h-[600px] relative z-0">
-        <LeafletMap stateFilter={stateFilter} />
+        <LeafletMap search={search} stateFilter={stateFilter} sectorFilter={sectorFilter} page={page} onDataLoaded={() => setLoading(false)} />
       </div>
     </div>
   );

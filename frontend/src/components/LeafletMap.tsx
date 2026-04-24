@@ -20,23 +20,37 @@ function ChangeView({ center, zoom }: { center: [number, number], zoom: number }
   return null;
 }
 
-export default function LeafletMap({ stateFilter }: { stateFilter: string }) {
+export default function LeafletMap({ 
+  search, 
+  stateFilter, 
+  sectorFilter, 
+  page, 
+  onDataLoaded 
+}: { 
+  search: string; 
+  stateFilter: string; 
+  sectorFilter: string; 
+  page: number; 
+  onDataLoaded: () => void;
+}) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/locations?map=true&state=${encodeURIComponent(stateFilter)}`)
+    fetch(`/api/locations?map=true&page=${page}&limit=100&search=${encodeURIComponent(search)}&state=${encodeURIComponent(stateFilter)}&sector=${encodeURIComponent(sectorFilter || '')}`)
       .then(res => res.json())
       .then(json => {
         setData(json.data || []);
         setLoading(false);
+        onDataLoaded();
       })
       .catch(err => {
         console.error(err);
         setLoading(false);
+        onDataLoaded();
       });
-  }, [stateFilter]);
+  }, [search, stateFilter, sectorFilter, page]);
 
   // Centro por defecto (México)
   const defaultCenter: [number, number] = [23.6345, -102.5528];
@@ -67,11 +81,44 @@ export default function LeafletMap({ stateFilter }: { stateFilter: string }) {
           return (
             <Marker key={loc.id} position={[parseFloat(loc.latitud), parseFloat(loc.longitud)]}>
               <Popup>
-                <div className="p-1">
-                  <h3 className="font-bold text-gray-900 mb-1">{loc.nom_estab}</h3>
-                  <p className="text-xs text-gray-500 mb-2">{loc.nombre_act}</p>
-                  <p className="text-sm"><strong>Municipio:</strong> {loc.municipio}, {loc.entidad}</p>
-                  {loc.telefono && <p className="text-sm mt-1"><strong>Tel:</strong> {loc.telefono}</p>}
+                <div className="p-2 min-w-[200px]">
+                  <h3 className="font-bold text-gray-900 text-base mb-1 border-b pb-1">{loc.nom_estab}</h3>
+                  <p className="text-xs text-blue-600 font-semibold mb-2">{loc.sector || loc.nombre_act}</p>
+                  
+                  <div className="space-y-1.5 text-sm">
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">Personal:</span>
+                      <span className="font-medium">{loc.per_ocu || 'No espec.'}</span>
+                    </p>
+                    <p className="flex justify-between">
+                      <span className="text-gray-500">Antigüedad:</span>
+                      <span className="font-medium">{loc.fecha_alta || 'N/A'}</span>
+                    </p>
+                    <p className="border-t pt-1.5 mt-1.5 text-gray-700">
+                      <strong>{loc.municipio}</strong>, {loc.entidad}
+                    </p>
+                  </div>
+
+                  <div className="mt-3 pt-2 border-t space-y-2">
+                    {loc.telefono && (
+                      <a href={`tel:${loc.telefono}`} className="flex items-center text-blue-600 hover:underline text-sm">
+                        <span className="mr-2">📞</span> {loc.telefono}
+                      </a>
+                    )}
+                    {loc.correoelec && (
+                      <a href={`mailto:${loc.correoelec}`} className="flex items-center text-blue-600 hover:underline text-sm">
+                        <span className="mr-2">✉️</span> {loc.correoelec}
+                      </a>
+                    )}
+                    {loc.www && (
+                      <a href={loc.www.startsWith('http') ? loc.www : `https://${loc.www}`} target="_blank" rel="noopener noreferrer" className="flex items-center text-blue-600 hover:underline text-sm">
+                        <span className="mr-2">🌐</span> Web
+                      </a>
+                    )}
+                    {!loc.telefono && !loc.correoelec && !loc.www && (
+                      <p className="text-xs text-gray-400 italic">Sin datos de contacto directos</p>
+                    )}
+                  </div>
                 </div>
               </Popup>
             </Marker>

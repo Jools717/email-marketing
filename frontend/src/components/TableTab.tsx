@@ -3,18 +3,16 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, ChevronLeft, ChevronRight, Phone, Mail } from 'lucide-react';
 
-export default function TableTab({ topStates }: { topStates: any[] }) {
+export default function TableTab({ search, stateFilter, sectorFilter }: { search: string; stateFilter: string; sectorFilter: string }) {
   const [data, setData] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [search, setSearch] = useState('');
-  const [stateFilter, setStateFilter] = useState('');
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/locations?page=${page}&limit=20&search=${encodeURIComponent(search)}&state=${encodeURIComponent(stateFilter)}`);
+      const res = await fetch(`/api/locations?page=${page}&limit=20&search=${encodeURIComponent(search)}&state=${encodeURIComponent(stateFilter)}&sector=${encodeURIComponent(sectorFilter)}`);
       const json = await res.json();
       setData(json.data || []);
       setTotalPages(json.totalPages || 1);
@@ -25,13 +23,9 @@ export default function TableTab({ topStates }: { topStates: any[] }) {
   };
 
   useEffect(() => {
-    // Debounce search
-    const timer = setTimeout(() => {
-      setPage(1);
-      fetchData();
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [search, stateFilter]);
+    setPage(1);
+    fetchData();
+  }, [search, stateFilter, sectorFilter]);
 
   useEffect(() => {
     fetchData();
@@ -39,33 +33,6 @@ export default function TableTab({ topStates }: { topStates: any[] }) {
 
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <div className="flex flex-col md:flex-row gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <input
-            type="text"
-            placeholder="Buscar por nombre o municipio..."
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all text-sm"
-          />
-        </div>
-        <div className="relative w-full md:w-64">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
-          <select
-            value={stateFilter}
-            onChange={(e) => setStateFilter(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-200 dark:border-gray-700 rounded-lg bg-gray-50 dark:bg-gray-900 focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none appearance-none text-sm cursor-pointer"
-          >
-            <option value="">Todos los Estados</option>
-            {topStates.map((s, i) => (
-              <option key={i} value={s.name}>{s.name}</option>
-            ))}
-          </select>
-        </div>
-      </div>
-
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
         <table className="w-full text-left text-sm whitespace-nowrap">
@@ -101,9 +68,13 @@ export default function TableTab({ topStates }: { topStates: any[] }) {
                     {row.raz_social && <p className="text-xs text-gray-500">{row.raz_social}</p>}
                   </td>
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                      {row.nombre_act}
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 max-w-xs truncate" title={row.nombre_act}>
+                      {row.sector || row.nombre_act}
                     </span>
+                    <div className="mt-1 flex space-x-2 text-[10px] text-gray-500">
+                      <span>👥 {row.per_ocu}</span>
+                      <span>📅 {row.fecha_alta}</span>
+                    </div>
                   </td>
                   <td className="px-6 py-4">
                     <p className="text-gray-900 dark:text-gray-200">{row.municipio}</p>
