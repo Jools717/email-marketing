@@ -1,0 +1,31 @@
+# Requisitos del Sistema y Dependencias
+
+Para ejecutar los tres módulos del proyecto (Backend de envío, Importador de CSV y Frontend), asegúrate de cumplir con los siguientes requisitos:
+
+## Entorno de Ejecución
+- Node.js >= 18.x
+- NPM >= 9.x
+- TypeScript >= 5.x
+
+## Infraestructura
+- Servidor PostgreSQL (Acceso remoto o local) configurado con capacidades para soportar millones de registros.
+- Servidor SMTP (Gmail con contraseñas de aplicación habilitadas o servicio similar).
+- (Opcional) Vercel u otra plataforma similar para hospedar el directorio Frontend.
+
+## Dependencias - Backend (`/backend/`)
+Se instalan con `npm install` en la carpeta `backend/`:
+- dotenv (Manejo de variables de entorno)
+- nodemailer (Envío de correos electrónicos)
+- pg (Cliente para PostgreSQL)
+- csv-parser (Lectura por flujos de archivos CSV de gran tamaño)
+- iconv-lite (Conversión de codificación de caracteres ISO-8859-1 a UTF-8)
+- ts-node (Ejecución de TypeScript)
+
+## Dependencias - Frontend Web (`/frontend/`)
+Se instalan con `npm install` dentro de la subcarpeta `frontend/`:
+- next (Framework React)
+- react & react-dom
+- tailwindcss (Framework de estilos)
+- lucide-react (Librería de iconos)
+- leaflet & react-leaflet (Mapas interactivos)
+- pg (Conexión a BD desde las API Routes de Next.js)
