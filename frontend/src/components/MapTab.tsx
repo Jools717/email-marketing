@@ -8,10 +8,19 @@ import { Filter } from 'lucide-react';
 const LeafletMap = dynamic(() => import('./LeafletMap'), {
   ssr: false,
   loading: () => (
-    <div className="h-[500px] w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
-      <div className="flex flex-col items-center space-y-4">
-        <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
-        <p className="text-gray-500">Cargando mapa interactivo...</p>
+    <div className="h-[600px] w-full flex items-center justify-center bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden relative">
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5"></div>
+      <div className="w-full max-w-sm bg-white/80 dark:bg-gray-800/80 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center space-y-5 relative z-10">
+         <div className="flex items-center space-x-3 text-blue-600 dark:text-blue-400">
+           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+           <h3 className="font-semibold text-lg">Iniciando Motor Geográfico...</h3>
+         </div>
+         <p className="text-sm text-gray-500 dark:text-gray-400 text-center leading-relaxed">
+           Preparando el entorno del mapa interactivo.
+         </p>
+         <div className="w-full h-1.5 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+           <div className="w-1/2 h-full bg-blue-600 rounded-full animate-pulse mx-auto"></div>
+         </div>
       </div>
     </div>
   ),

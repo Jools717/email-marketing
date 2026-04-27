@@ -35,6 +35,25 @@ export default function LeafletMap({
 }) {
   const [data, setData] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
+  // Simulated progress bar effect
+  useEffect(() => {
+    if (loading) {
+      setProgress(0);
+      const interval = setInterval(() => {
+        setProgress(old => {
+          // Slow down as it reaches 90%
+          if (old >= 90) return old;
+          const increment = Math.random() * (90 - old) * 0.1 + 1;
+          return Math.min(old + increment, 90);
+        });
+      }, 300);
+      return () => clearInterval(interval);
+    } else {
+      setProgress(100);
+    }
+  }, [loading]);
 
   useEffect(() => {
     setLoading(true);
@@ -66,8 +85,32 @@ export default function LeafletMap({
   return (
     <div className="h-full w-full relative">
       {loading && (
-        <div className="absolute inset-0 z-[1000] bg-white/50 dark:bg-gray-900/50 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+        <div className="absolute inset-0 z-[1000] bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="w-full max-w-sm bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700 flex flex-col items-center space-y-5 animate-in fade-in zoom-in duration-300">
+             <div className="flex items-center space-x-3 text-blue-600 dark:text-blue-400">
+               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>
+               <h3 className="font-semibold text-lg">Cargando Mapa...</h3>
+             </div>
+             
+             <p className="text-sm text-gray-500 dark:text-gray-400 text-center leading-relaxed">
+               Procesando grandes volúmenes de datos del INEGI. Esto puede tomar unos segundos.
+             </p>
+             
+             <div className="w-full space-y-2">
+               <div className="w-full bg-gray-100 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                 <div 
+                   className="bg-blue-600 h-2.5 rounded-full transition-all duration-300 ease-out relative" 
+                   style={{ width: `${progress}%` }}
+                 >
+                   <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                 </div>
+               </div>
+               <div className="w-full flex justify-between text-xs font-medium text-gray-400">
+                 <span>Procesando coordenadas</span>
+                 <span>{Math.round(progress)}%</span>
+               </div>
+             </div>
+          </div>
         </div>
       )}
       <MapContainer center={center} zoom={zoom} style={{ height: '100%', width: '100%' }}>
