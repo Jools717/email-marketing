@@ -35,7 +35,8 @@ async function main() {
     const success = await sendMarketingEmail(mainEmail, {
       nombre_empresa: lead.nombre_empresa,
       enfoque_ventas: lead.enfoque_ventas,
-      sector: lead.sector
+      sector: lead.sector,
+      lead_id: lead.id
     });
 
     if (success) {

@@ -4,8 +4,10 @@ import { useState, useEffect } from 'react';
 import { Map as MapIcon, Table as TableIcon, Activity, MapPin, Store } from 'lucide-react';
 import TableTab from './TableTab';
 import MapTab from './MapTab';
+import { useSearchParams } from 'next/navigation';
 
 export default function Dashboard() {
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<'table' | 'map'>('table');
   const [stats, setStats] = useState<any>(null);
   const [globalStates, setGlobalStates] = useState<any[]>([]);
@@ -15,6 +17,38 @@ export default function Dashboard() {
   const [search, setSearch] = useState('');
   const [stateFilter, setStateFilter] = useState('');
   const [sectorFilter, setSectorFilter] = useState('');
+
+  // 1. Captura de UTMs y persistencia en DB y LocalStorage
+  useEffect(() => {
+    const utms = {
+      lead_id: searchParams.get('ref'), // Usamos ref como lead_id
+      fuente: searchParams.get('utm_source'),
+      medio: searchParams.get('utm_medium'),
+      campana: searchParams.get('utm_campaign'),
+      contenido: searchParams.get('utm_content'),
+      url_completa: window.location.href,
+      user_agent: navigator.userAgent
+    };
+
+    // Si detectamos que viene de una campaña (fuente o ref)
+    if (utms.fuente || utms.lead_id) {
+      // Guardar en LocalStorage para persistencia en el navegador
+      localStorage.setItem('atribucion_marketing_mexico', JSON.stringify({
+        ...utms,
+        fecha: new Date().toISOString()
+      }));
+
+      // ENVIAR A LA BASE DE DATOS (NUEVO LOG)
+      fetch('/api/track-click', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(utms)
+      })
+      .then(res => res.json())
+      .then(data => console.log('Clic registrado en base de datos:', data.id))
+      .catch(err => console.error('Error al registrar log de marketing:', err));
+    }
+  }, [searchParams]);
 
   // Fetch initial global states for the dropdown
   useEffect(() => {
@@ -35,6 +69,17 @@ export default function Dashboard() {
         .then(data => {
           setStats(data);
           setLoadingStats(false);
+          
+          // 2. Trackeo de búsqueda en Meta Pixel
+          // @ts-ignore
+          if (window.fbq && (search || stateFilter || sectorFilter)) {
+            // @ts-ignore
+            window.fbq('track', 'Search', {
+              search_string: search,
+              content_category: sectorFilter,
+              content_ids: [stateFilter]
+            });
+          }
         })
         .catch(err => {
           console.error(err);

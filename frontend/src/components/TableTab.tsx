@@ -83,16 +83,30 @@ export default function TableTab({ search, stateFilter, sectorFilter }: { search
                   <td className="px-6 py-4">
                     <div className="flex flex-col space-y-1">
                       {row.telefono && (
-                        <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <a 
+                          href={`tel:${row.telefono}`} 
+                          onClick={() => {
+                            // @ts-ignore
+                            if (window.fbq) window.fbq('track', 'Lead', { content_name: row.nom_estab, content_category: 'Phone' });
+                          }}
+                          className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-colors"
+                        >
                           <Phone size={14} className="mr-2" />
                           <span>{row.telefono}</span>
-                        </div>
+                        </a>
                       )}
                       {row.correoelec && (
-                        <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <a 
+                          href={`mailto:${row.correoelec}`}
+                          onClick={() => {
+                            // @ts-ignore
+                            if (window.fbq) window.fbq('track', 'Lead', { content_name: row.nom_estab, content_category: 'Email' });
+                          }}
+                          className="flex items-center text-gray-600 dark:text-gray-400 hover:text-blue-600 transition-colors"
+                        >
                           <Mail size={14} className="mr-2" />
                           <span>{row.correoelec}</span>
-                        </div>
+                        </a>
                       )}
                       {!row.telefono && !row.correoelec && <span className="text-gray-400 italic text-xs">No disponible</span>}
                     </div>

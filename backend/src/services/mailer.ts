@@ -13,19 +13,30 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendMarketingEmail(to: string, data: { nombre_empresa: string, enfoque_ventas: string, sector: string }) {
+export async function sendMarketingEmail(to: string, data: { nombre_empresa: string, enfoque_ventas: string, sector: string, lead_id: number }) {
   const templatePath = path.join(__dirname, '../templates/marketing.html');
   let html = await fs.readFile(templatePath, 'utf8');
+
+  // Configuración de seguimiento (UTMs en español y detallados)
+  const baseUrl = process.env.BASE_URL || "http://localhost:3000"; 
+  const fuente = "correo_directo_mexico";
+  const medio = "email_marketing_proactivo";
+  const campana = "prospeccion_mayoreo_semanal";
+  const contenido = "boton_explorar_plataforma_inegi";
+  
+  const linkSeguimiento = `${baseUrl}/?utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${campana}&utm_content=${contenido}&ref=${data.lead_id}`;
 
   html = html
     .replace(/{{nombre_empresa}}/g, data.nombre_empresa)
     .replace(/{{enfoque_ventas}}/g, data.enfoque_ventas)
-    .replace(/{{sector}}/g, data.sector || 'Distribución');
+    .replace(/{{sector}}/g, data.sector || 'Distribución')
+    .replace(/{{base_url}}/g, baseUrl)
+    .replace(/{{link_seguimiento}}/g, linkSeguimiento);
 
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: to,
-    subject: `Propuesta de Expansión para ${data.nombre_empresa}`,
+    subject: `Nuevos puntos de venta minorista para ${data.nombre_empresa}`,
     html: html,
   };
 
