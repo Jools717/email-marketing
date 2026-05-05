@@ -45,3 +45,5 @@ export default function RootLayout({
     </html>
   );
 }
+
+// Deployment check: juliorj717@gmail.com
