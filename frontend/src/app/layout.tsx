@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 
 import { Suspense } from "react";
 import FacebookPixel from "@/components/FacebookPixel";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import PromotionBanner from "@/components/PromotionBanner";
 
 export default function RootLayout({
   children,
@@ -34,7 +36,9 @@ export default function RootLayout({
         <Suspense fallback={null}>
           <FacebookPixel />
         </Suspense>
+        <PromotionBanner />
         {children}
+        <WhatsAppButton />
       </body>
     </html>
   );

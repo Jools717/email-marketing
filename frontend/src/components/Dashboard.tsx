@@ -113,7 +113,7 @@ export default function Dashboard() {
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Estado</p>
             <p className="text-xl font-bold text-gray-900 dark:text-white truncate">
-              {loadingStats ? '...' : (stateFilter ? globalStates.find(s => s.rawName === stateFilter)?.name : stats?.topStates?.[0]?.name) || 'N/A'}
+              {loadingStats ? '...' : (stateFilter ? globalStates.find(s => s.rawName === stateFilter)?.name : 'Todos los Estados')}
             </p>
           </div>
         </div>
@@ -124,8 +124,8 @@ export default function Dashboard() {
           </div>
           <div className="flex-1 overflow-hidden">
             <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Categoría</p>
-            <p className="text-sm font-bold text-gray-900 dark:text-white truncate" title={sectorFilter || stats?.topCategories?.[0]?.name}>
-              {loadingStats ? '...' : sectorFilter || stats?.topCategories?.[0]?.name || 'N/A'}
+            <p className="text-xl font-bold text-gray-900 dark:text-white truncate" title={sectorFilter || 'Todos los Sectores'}>
+              {loadingStats ? '...' : sectorFilter || 'Todos los Sectores'}
             </p>
           </div>
         </div>
