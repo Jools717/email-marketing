@@ -30,10 +30,20 @@ const PromotionBanner = () => {
   const handleAction = () => {
     // Evento para GTM/Tag Manager
     if (typeof window !== 'undefined' && window.dataLayer) {
+      let lead_id = null;
+      try {
+        const stored = localStorage.getItem('atribucion_marketing_mexico');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          lead_id = parsed.lead_id;
+        }
+      } catch (e) {}
+
       window.dataLayer.push({
         event: 'promotion_banner_click',
         banner_name: 'asesoria_mayorista',
-        action: 'quiero_asesorarme'
+        action: 'quiero_asesorarme',
+        lead_id: lead_id
       });
     }
     console.log('Solicitando asesoría...');
