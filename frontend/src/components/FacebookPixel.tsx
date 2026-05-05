@@ -11,23 +11,25 @@ export default function FacebookPixel() {
     // Definimos la función de inicialización del Píxel
     // @ts-ignore
     if (typeof window !== 'undefined' && !window.fbq) {
-      // @ts-ignore
-      !(function (f, b, e, v, n, t, s) {
-        if (f.fbq) return;
-        n = f.fbq = function () {
-          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
-        };
-        if (!f._fbq) f._fbq = n;
-        n.push = n;
-        n.loaded = !0;
-        n.version = '2.0';
-        n.queue = [];
-        t = b.createElement(e);
-        t.async = !0;
-        t.src = v;
-        s = b.getElementsByTagName(e)[0];
-        s.parentNode.insertBefore(t, s);
-      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      const fbq = function (...args: any[]) {
+        fbq.callMethod ? fbq.callMethod.apply(fbq, args) : fbq.queue.push(args);
+      } as any;
+      
+      if (!window._fbq) window._fbq = fbq;
+      fbq.push = fbq;
+      fbq.loaded = true;
+      fbq.version = '2.0';
+      fbq.queue = [];
+      
+      window.fbq = fbq;
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://connect.facebook.net/en_US/fbevents.js';
+      const firstScript = document.getElementsByTagName('script')[0];
+      if (firstScript && firstScript.parentNode) {
+        firstScript.parentNode.insertBefore(script, firstScript);
+      }
 
       // @ts-ignore
       window.fbq('init', 'TU_ID_DE_PIXEL_AQUI'); // <--- PEGA AQUÍ TU ID

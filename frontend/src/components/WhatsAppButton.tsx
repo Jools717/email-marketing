@@ -4,7 +4,14 @@ import React from 'react';
 
 const WhatsAppButton = () => {
   const handleClick = () => {
-    // Reemplaza con el número real o lógica necesaria
+    // Evento para GTM/Tag Manager
+    if (typeof window !== 'undefined' && window.dataLayer) {
+      window.dataLayer.push({
+        event: 'whatsapp_contact',
+        platform: 'whatsapp',
+        location: 'floating_button'
+      });
+    }
     window.open('https://wa.me/573000000000', '_blank');
   };
 

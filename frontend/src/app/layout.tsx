@@ -21,6 +21,7 @@ import { Suspense } from "react";
 import FacebookPixel from "@/components/FacebookPixel";
 import WhatsAppButton from "@/components/WhatsAppButton";
 import PromotionBanner from "@/components/PromotionBanner";
+import GoogleTagManager from "@/components/GoogleTagManager";
 
 export default function RootLayout({
   children,
@@ -35,6 +36,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Suspense fallback={null}>
           <FacebookPixel />
+          <GoogleTagManager gtmId="GTM-XXXXXXX" /> {/* REEMPLAZA CON TU ID */}
         </Suspense>
         <PromotionBanner />
         {children}

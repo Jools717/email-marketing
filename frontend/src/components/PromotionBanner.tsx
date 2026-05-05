@@ -28,7 +28,14 @@ const PromotionBanner = () => {
   };
 
   const handleAction = () => {
-    // Lógica para asesoría
+    // Evento para GTM/Tag Manager
+    if (typeof window !== 'undefined' && window.dataLayer) {
+      window.dataLayer.push({
+        event: 'promotion_banner_click',
+        banner_name: 'asesoria_mayorista',
+        action: 'quiero_asesorarme'
+      });
+    }
     console.log('Solicitando asesoría...');
     window.open('https://calendly.com/tu-empresa', '_blank');
   };
