@@ -1,4 +1,5 @@
 import Dashboard from '@/components/Dashboard';
+import { Suspense } from 'react';
 
 export default function Home() {
   return (
@@ -22,7 +23,9 @@ export default function Home() {
           </div>
         </header>
 
-        <Dashboard />
+        <Suspense fallback={<div className="flex items-center justify-center py-20">Cargando dashboard...</div>}>
+          <Dashboard />
+        </Suspense>
       </div>
     </main>
   );
