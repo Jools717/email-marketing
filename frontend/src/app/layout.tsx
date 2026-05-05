@@ -36,7 +36,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <Suspense fallback={null}>
           <FacebookPixel />
-          <GoogleTagManager gtmId="GTM-XXXXXXX" /> {/* REEMPLAZA CON TU ID */}
+          <GoogleTagManager gtmId="GTM-MRPVGSPK" />
         </Suspense>
         <PromotionBanner />
         {children}
