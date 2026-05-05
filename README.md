@@ -72,3 +72,31 @@ npm run dev
 # o en producción:
 # npm run build && npm start
 ```
+```
+
+## 📊 Google Tag Manager & Analytics
+
+La plataforma está integrada con GTM para el seguimiento de conversiones.
+
+### Eventos Implementados (DataLayer)
+Los siguientes eventos se disparan automáticamente y pueden ser capturados en GTM:
+
+1.  **`whatsapp_contact`**: Se dispara al hacer clic en el botón flotante de WhatsApp.
+    *   Propiedades: `platform: 'whatsapp'`, `location: 'floating_button'`.
+2.  **`promotion_banner_click`**: Se dispara al hacer clic en el botón "Quiero Asesorarme" del banner superior.
+    *   Propiedades: `banner_name: 'asesoria_mayorista'`, `action: 'quiero_asesorarme'`.
+
+### Pasos para configurar en GTM:
+1.  **Crear Activador (Trigger):**
+    *   Tipo: Evento personalizado.
+    *   Nombre del evento: `whatsapp_contact` (o el que desees trackear).
+2.  **Crear Etiqueta (Tag):**
+    *   Tipo: Google Analytics: Evento de GA4.
+    *   Nombre del evento: (ej. `conversion_whatsapp`).
+    *   Activador: Selecciona el que creaste en el paso anterior.
+3.  **Verificación:**
+    *   Usa el modo "Preview" de GTM.
+    *   Verifica que los eventos aparezcan en la pestaña **Data Layer** del Tag Assistant al interactuar con los botones.
+
+---
+© 2026 TomaPedidos B2B - Inteligencia Comercial.
