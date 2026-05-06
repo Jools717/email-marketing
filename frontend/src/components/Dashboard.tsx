@@ -38,15 +38,17 @@ export default function Dashboard() {
         fecha: new Date().toISOString()
       }));
 
-      // ENVIAR A LA BASE DE DATOS (NUEVO LOG)
-      fetch('/api/track-click', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(utms)
-      })
-      .then(res => res.json())
-      .then(data => console.log('Clic registrado en base de datos:', data.id))
-      .catch(err => console.error('Error al registrar log de marketing:', err));
+      // ENVIAR A GOOGLE TAG MANAGER EN LUGAR DE LA BASE DE DATOS
+      if (typeof window !== 'undefined' && window.dataLayer) {
+        window.dataLayer.push({
+          event: 'user_identified',
+          lead_id: utms.lead_id,
+          utm_source: utms.fuente,
+          utm_medium: utms.medio,
+          utm_campaign: utms.campana,
+          utm_content: utms.contenido
+        });
+      }
     }
   }, [searchParams]);
 
@@ -80,6 +82,24 @@ export default function Dashboard() {
               content_ids: [stateFilter]
             });
           }
+
+          // 3. Trackeo de búsqueda en GTM
+          if (typeof window !== 'undefined' && window.dataLayer && (search || stateFilter || sectorFilter)) {
+            let lead_id = searchParams.get('ref') || null;
+            if (!lead_id) {
+              try {
+                const stored = localStorage.getItem('atribucion_marketing_mexico');
+                if (stored) lead_id = JSON.parse(stored).lead_id;
+              } catch (e) {}
+            }
+            window.dataLayer.push({
+              event: 'dashboard_search',
+              search_string: search,
+              sector_filter: sectorFilter,
+              state_filter: stateFilter,
+              lead_id: lead_id
+            });
+          }
         })
         .catch(err => {
           console.error(err);
@@ -89,6 +109,24 @@ export default function Dashboard() {
 
     return () => clearTimeout(timer);
   }, [search, stateFilter, sectorFilter]);
+
+  const handleTabChange = (tab: 'table' | 'map') => {
+    setActiveTab(tab);
+    if (typeof window !== 'undefined' && window.dataLayer) {
+      let lead_id = searchParams.get('ref') || null;
+      if (!lead_id) {
+        try {
+          const stored = localStorage.getItem('atribucion_marketing_mexico');
+          if (stored) lead_id = JSON.parse(stored).lead_id;
+        } catch (e) {}
+      }
+      window.dataLayer.push({
+        event: 'tab_change',
+        tab_name: tab,
+        lead_id: lead_id
+      });
+    }
+  };
 
   return (
     <div className="space-y-6">
@@ -184,7 +222,7 @@ export default function Dashboard() {
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div className="flex border-b border-gray-100 dark:border-gray-700">
           <button
-            onClick={() => setActiveTab('table')}
+            onClick={() => handleTabChange('table')}
             className={`flex-1 py-4 px-6 text-sm font-medium flex items-center justify-center space-x-2 transition-colors ${
               activeTab === 'table'
                 ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'
@@ -195,7 +233,7 @@ export default function Dashboard() {
             <span>Directorio y Búsqueda</span>
           </button>
           <button
-            onClick={() => setActiveTab('map')}
+            onClick={() => handleTabChange('map')}
             className={`flex-1 py-4 px-6 text-sm font-medium flex items-center justify-center space-x-2 transition-colors ${
               activeTab === 'map'
                 ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border-b-2 border-blue-600 dark:border-blue-400'

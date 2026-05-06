@@ -6,10 +6,20 @@ const WhatsAppButton = () => {
   const handleClick = () => {
     // Evento para GTM/Tag Manager
     if (typeof window !== 'undefined' && window.dataLayer) {
+      let lead_id = null;
+      try {
+        const stored = localStorage.getItem('atribucion_marketing_mexico');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          lead_id = parsed.lead_id;
+        }
+      } catch (e) {}
+
       window.dataLayer.push({
         event: 'whatsapp_contact',
         platform: 'whatsapp',
-        location: 'floating_button'
+        location: 'floating_button',
+        lead_id: lead_id
       });
     }
     window.open('https://wa.me/573000000000', '_blank');
