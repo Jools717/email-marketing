@@ -22,6 +22,8 @@ export default function Dashboard() {
   useEffect(() => {
     const utms = {
       lead_id: searchParams.get('ref'), // Usamos ref como lead_id
+      nombre_empresa: searchParams.get('empresa'), // Capturamos el nombre de la empresa
+      user_email: searchParams.get('email'), // Capturamos el email del destinatario
       fuente: searchParams.get('utm_source'),
       medio: searchParams.get('utm_medium'),
       campana: searchParams.get('utm_campaign'),
@@ -39,10 +41,15 @@ export default function Dashboard() {
       }));
 
       // ENVIAR A GOOGLE TAG MANAGER EN LUGAR DE LA BASE DE DATOS
-      if (typeof window !== 'undefined' && window.dataLayer) {
+      if (typeof window !== 'undefined') {
+        window.dataLayer = window.dataLayer || [];
+        console.log('GTM Dashboard: Enviando user_identified', utms.user_email || utms.nombre_empresa || utms.lead_id);
         window.dataLayer.push({
           event: 'user_identified',
+          debug_mode: true,
           lead_id: utms.lead_id,
+          company_name: utms.nombre_empresa,
+          user_email: utms.user_email,
           utm_source: utms.fuente,
           utm_medium: utms.medio,
           utm_campaign: utms.campana,
@@ -84,20 +91,32 @@ export default function Dashboard() {
           }
 
           // 3. Trackeo de búsqueda en GTM
-          if (typeof window !== 'undefined' && window.dataLayer && (search || stateFilter || sectorFilter)) {
+          if (typeof window !== 'undefined' && (search || stateFilter || sectorFilter)) {
+            window.dataLayer = window.dataLayer || [];
             let lead_id = searchParams.get('ref') || null;
+            let company_name = searchParams.get('empresa') || null;
+            let user_email = searchParams.get('email') || null;
+
             if (!lead_id) {
               try {
                 const stored = localStorage.getItem('atribucion_marketing_mexico');
-                if (stored) lead_id = JSON.parse(stored).lead_id;
+                if (stored) {
+                  const parsed = JSON.parse(stored);
+                  lead_id = parsed.lead_id;
+                  company_name = parsed.nombre_empresa;
+                  user_email = parsed.user_email;
+                }
               } catch (e) {}
             }
             window.dataLayer.push({
               event: 'dashboard_search',
+              debug_mode: true,
               search_string: search,
               sector_filter: sectorFilter,
               state_filter: stateFilter,
-              lead_id: lead_id
+              lead_id: lead_id,
+              company_name: company_name,
+              user_email: user_email
             });
           }
         })
@@ -111,19 +130,36 @@ export default function Dashboard() {
   }, [search, stateFilter, sectorFilter]);
 
   const handleTabChange = (tab: 'table' | 'map') => {
+    console.log('GTM Dashboard: Click en pestaña', tab);
     setActiveTab(tab);
-    if (typeof window !== 'undefined' && window.dataLayer) {
+    
+    if (typeof window !== 'undefined') {
+      window.dataLayer = window.dataLayer || [];
+      
       let lead_id = searchParams.get('ref') || null;
+      let company_name = searchParams.get('empresa') || null;
+      let user_email = searchParams.get('email') || null;
+
       if (!lead_id) {
         try {
           const stored = localStorage.getItem('atribucion_marketing_mexico');
-          if (stored) lead_id = JSON.parse(stored).lead_id;
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            lead_id = parsed.lead_id;
+            company_name = parsed.nombre_empresa;
+            user_email = parsed.user_email;
+          }
         } catch (e) {}
       }
+
+      console.log('GTM Dashboard: Enviando tab_change', tab, 'lead_id:', lead_id, 'empresa:', company_name, 'email:', user_email);
       window.dataLayer.push({
         event: 'tab_change',
-        tab_name: tab,
-        lead_id: lead_id
+        debug_mode: true,
+        tab_name: tab === 'table' ? 'Directorio y Búsqueda' : 'Mapa Interactivo',
+        lead_id: lead_id,
+        company_name: company_name,
+        user_email: user_email
       });
     }
   };

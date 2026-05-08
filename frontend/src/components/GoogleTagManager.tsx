@@ -10,18 +10,37 @@ export default function GoogleTagManager({ gtmId }: { gtmId: string }) {
   useEffect(() => {
     if (!gtmId || typeof window === 'undefined') return;
 
-    // Solo inicializamos el script la primera vez
-    if (!window.dataLayer) {
-      window.dataLayer = window.dataLayer || [];
+    console.log('GTM: Iniciando carga para el ID:', gtmId);
+
+    // Inicializamos dataLayer si no existe
+    window.dataLayer = window.dataLayer || [];
+
+    // Verificamos si GTM ya fue cargado para evitar duplicados
+    const scripts = document.getElementsByTagName('script');
+    let isAlreadyLoaded = false;
+    for (let i = 0; i < scripts.length; i++) {
+      if (scripts[i].src.includes(`id=${gtmId}`)) {
+        isAlreadyLoaded = true;
+        break;
+      }
+    }
+
+    if (!isAlreadyLoaded) {
+      console.log('GTM: Inyectando script en el DOM...');
       window.dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
 
-      const f = document.getElementsByTagName('script')[0];
       const j = document.createElement('script') as HTMLScriptElement;
       j.async = true;
       j.src = `https://www.googletagmanager.com/gtm.js?id=${gtmId}`;
+      
+      const f = document.getElementsByTagName('script')[0];
       if (f && f.parentNode) {
         f.parentNode.insertBefore(j, f);
+      } else {
+        document.head.appendChild(j);
       }
+    } else {
+      console.log('GTM: El script ya estaba presente en el DOM.');
     }
   }, [gtmId]);
 
@@ -29,6 +48,7 @@ export default function GoogleTagManager({ gtmId }: { gtmId: string }) {
     if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push({
         event: 'virtual_page_view',
+        debug_mode: true,
         page_path: pathname,
         page_search: searchParams.toString()
       });

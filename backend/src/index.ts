@@ -21,32 +21,37 @@ async function main() {
   let successCount = 0;
   let errorCount = 0;
 
-  // 2. Iterar sobre cada lead y enviar el correo
+  // 2. Iterar sobre cada lead y enviar el correo a todas sus direcciones
   for (const lead of leadsToProcess) {
-    // Nota: La base de datos puede tener múltiples emails separados por coma.
-    // Tomaremos el primero, o se pueden enviar a todos. Aquí tomamos el primero:
-    const mainEmail = lead.emails.split(',')[0].trim();
+    // La base de datos puede tener múltiples emails separados por coma.
+    const emailList = lead.emails.split(',')
+      .map(e => e.trim())
+      .filter(e => e !== '');
     
-    if (!mainEmail) continue;
+    if (emailList.length === 0) continue;
 
-    console.log(`\nProcesando: ${lead.nombre_empresa} -> ${mainEmail}`);
+    console.log(`\nProcesando empresa: ${lead.nombre_empresa} (${emailList.length} correos)`);
     
-    // 3. Ejecutar el servicio de envío de correos
-    const success = await sendMarketingEmail(mainEmail, {
-      nombre_empresa: lead.nombre_empresa,
-      enfoque_ventas: lead.enfoque_ventas,
-      sector: lead.sector,
-      lead_id: lead.id
-    });
+    for (const email of emailList) {
+      console.log(`  -> Enviando a: ${email}`);
+      
+      // 3. Ejecutar el servicio de envío de correos
+      const success = await sendMarketingEmail(email, {
+        nombre_empresa: lead.nombre_empresa,
+        enfoque_ventas: lead.enfoque_ventas,
+        sector: lead.sector,
+        lead_id: lead.id
+      });
 
-    if (success) {
-      successCount++;
-    } else {
-      errorCount++;
+      if (success) {
+        successCount++;
+      } else {
+        errorCount++;
+      }
+
+      // 4. Pausar entre cada correo individual para evitar bloqueos
+      await sleep(SLEEP_MS);
     }
-
-    // 4. Pausar entre envíos para no saturar el servidor SMTP
-    await sleep(SLEEP_MS);
   }
 
   console.log("\n=================================");

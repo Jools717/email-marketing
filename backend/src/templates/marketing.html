@@ -3,67 +3,91 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inteligencia Comercial para Mayoristas</title>
-    <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #333333; background-color: #f9fafb; margin: 0; padding: 0; }
-        .container { max-width: 600px; margin: 30px auto; background: #ffffff; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .header { padding: 30px 40px 10px; }
-        .logo { font-size: 20px; font-weight: 700; color: #111827; letter-spacing: -0.5px; }
-        .content { padding: 10px 40px 40px; }
-        .greeting { font-size: 18px; font-weight: 600; margin-bottom: 15px; color: #111827; }
-        .paragraph { margin-bottom: 16px; font-size: 15px; color: #4b5563; }
-        .insight-box { background-color: #f3f4f6; padding: 20px; margin: 25px 0; border-radius: 8px; }
-        .insight-box p { margin: 0; font-size: 15px; color: #374151; }
-        .highlight { font-weight: 600; color: #111827; }
-        .image-container { margin: 30px 0; border-radius: 8px; overflow: hidden; border: 1px solid #e5e7eb; }
-        .image-container img { width: 100%; display: block; }
-        .cta-container { text-align: center; margin-top: 35px; }
-        .cta-button { display: inline-block; background-color: #2563eb; color: #ffffff; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500; font-size: 15px; transition: background-color 0.2s; }
-        .signature { margin-top: 30px; font-size: 15px; color: #4b5563; }
-        .footer { background-color: #f9fafb; padding: 20px 40px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #e5e7eb; }
-    </style>
+    <title>Inteligencia Comercial para {{nombre_empresa}}</title>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <div class="logo">TomaPedidos</div>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; background-color: #f8fafc; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);">
+        
+        <!-- Header Image -->
+        <div style="background-color: #4F46E5; background-image: url('https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=600&auto=format&fit=crop'); background-size: cover; background-position: center; width: 100%; text-align: center; padding: 50px 20px; box-sizing: border-box;">
+            <!-- Caja oscura semi-transparente para asegurar que el texto siempre se lea -->
+            <div style="background-color: rgba(15, 23, 42, 0.85); padding: 25px 40px; border-radius: 8px; display: inline-block;">
+                <h1 style="color: white; margin: 0; font-size: 36px; font-weight: 800; letter-spacing: -0.5px;">DirectMin</h1>
+                <p style="color: #e0e7ff; margin: 5px 0 0 0; font-size: 18px; font-weight: 500;">Inteligencia B2B en Acción</p>
+            </div>
         </div>
-        <div class="content">
-            <p class="greeting">Hola, equipo de {{nombre_empresa}},</p>
+        <div style="height: 4px; background-color: #FF7F50; width: 100%;"></div>
+
+        <div style="padding: 40px;">
+            <!-- Greeting -->
+            <h2 style="font-size: 24px; font-weight: 700; color: #0f172a; margin-top: 0; margin-bottom: 30px; text-align: center;">
+                ¡Hola, {{nombre_empresa}}! 👋
+            </h2>
             
-            <p class="paragraph">Escribo de forma directa porque sabemos que su tiempo es valioso. En TomaPedidos nos dedicamos a algo muy específico: <strong>ayudar a mayoristas a identificar y conectar con nuevos clientes minoristas de forma quirúrgica.</strong></p>
-            
-            <p class="paragraph">Antes de contactarlos, analizamos su presencia en el mercado y notamos que tienen un enfoque claro en el sector de <span class="highlight">{{sector}}</span>. Especialmente, nos llamó la atención su enfoque de ventas:</p>
-            
-            <div class="insight-box">
-                <p><em>"{{enfoque_ventas}}"</em></p>
+            <!-- Section 1 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 25px; margin-bottom: 25px; display: flex; align-items: flex-start;">
+                <div style="background-color: #e0e7ff; color: #4F46E5; border-radius: 8px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-right: 20px; flex-shrink: 0; text-align: center; line-height: 45px;">
+                    🎯
+                </div>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #0f172a;">Analizamos tu estrategia</h3>
+                    <p style="margin: 0; font-size: 16px; color: #475569;">Estuvimos revisando el panorama del sector de <strong>{{sector}}</strong> y nos <strong>llamó mucho la atención tu modelo de negocio</strong>. En particular, notamos que tu enfoque principal es: <br><br><span style="color: #4F46E5; font-weight: 600; font-style: italic;">"{{enfoque_ventas}}"</span></p>
+                </div>
+            </div>
+
+            <!-- Section 2 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 25px; margin-bottom: 25px; display: flex; align-items: flex-start;">
+                <div style="background-color: #ffedd5; color: #ea580c; border-radius: 8px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-right: 20px; flex-shrink: 0; text-align: center; line-height: 45px;">
+                    🧠
+                </div>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #0f172a;">Cómo sumamos valor</h3>
+                    <p style="margin: 0; font-size: 16px; color: #475569;">En <strong>DirectMin</strong> nos dedicamos a la inteligencia de datos. Sabemos lo frustrante y lento que es buscar nuevos clientes a ciegas. Por eso, en lugar de enviarte el típico correo de ventas, decidimos hacer el <strong>trabajo pesado por ti</strong>.</p>
+                </div>
+            </div>
+
+            <!-- Section 3 -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 25px; margin-bottom: 35px; display: flex; align-items: flex-start;">
+                <div style="background-color: #dcfce7; color: #16a34a; border-radius: 8px; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; font-size: 22px; margin-right: 20px; flex-shrink: 0; text-align: center; line-height: 45px;">
+                    📍
+                </div>
+                <div>
+                    <h3 style="margin: 0 0 8px 0; font-size: 18px; color: #0f172a;">Tu mercado, mapeado</h3>
+                    <p style="margin: 0; font-size: 16px; color: #475569;">Hemos cruzado bases de datos oficiales para crear un <strong>mapa interactivo exclusivo</strong>. En él, puedes ver en tiempo real exactamente dónde están ubicados los <strong>puntos de venta ideales</strong> para que tus productos lleguen a más personas.</p>
+                </div>
+            </div>
+
+            <!-- Context before CTA -->
+            <div style="text-align: center; margin-bottom: 25px;">
+                <p style="font-size: 17px; color: #334155; font-weight: 500; margin: 0;">
+                    No tienes que creernos a ciegas. Preparamos un acceso directo para que entres a la plataforma, filtres por tu sector y <strong>descubras con tus propios ojos el potencial</strong> de datos que tienes a tu alcance.
+                </p>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align: center; margin: 0 0 45px 0;">
+                <a href="{{link_seguimiento}}" style="display: block; background-color: #FF7F50; color: #ffffff; padding: 20px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 18px; box-shadow: 0 10px 15px -3px rgba(255, 127, 80, 0.3), 0 4px 6px -2px rgba(255, 127, 80, 0.15); border: 2px solid #ea580c; text-transform: uppercase; letter-spacing: 0.5px;">
+                    🚀 VER MIS CLIENTES POTENCIALES
+                </a>
+                <p style="font-size: 14px; color: #64748b; margin-top: 15px;">*Explora la herramienta libremente, sin tarjetas ni compromisos.</p>
             </div>
             
-            <p class="paragraph">Sabemos que salir a buscar nuevos puntos de venta (tiendas, farmacias, ferreterías, etc.) muchas veces implica trabajar "a ciegas" o depender de bases de datos desactualizadas.</p>
-            
-            <p class="paragraph">Por eso, en lugar de enviarles un típico correo de ventas prometiendo resultados mágicos, preferimos mostrarles nuestra herramienta. Hemos cruzado los datos oficiales del INEGI y creado un mapa interactivo con millones de establecimientos en México, filtrables por zona y rubro.</p>
-            
-            <div class="image-container">
-                <img src="{{base_url}}/dashboard-preview.png" alt="Vista previa del mapa de establecimientos" />
+            <!-- Signature -->
+            <div style="margin-top: 40px; border-top: 1px solid #e2e8f0; padding-top: 30px; text-align: center;">
+                <p style="font-size: 17px; color: #475569; margin: 0 0 15px 0;">
+                    Si después de probarla sientes que hace sentido para tu estrategia, nos encantaría agendar una charla súper rápida (10 min) para escuchar tu opinión. <strong>Cero presión de venta, te lo prometemos.</strong>
+                </p>
+                <p style="font-size: 16px; color: #64748b; margin: 0;">
+                    Un saludo muy cordial,<br>
+                    <strong style="color: #0f172a; font-size: 18px; display: block; margin-top: 5px;">Equipo de Inteligencia, DirectMin</strong>
+                </p>
             </div>
-            
-            <p class="paragraph">La idea es simple: <strong>ustedes nos dicen qué tipo de clientes buscan, y la plataforma les dice exactamente dónde están y cómo contactarlos.</strong></p>
-            
-            <p class="paragraph">No queremos agendar reuniones innecesarias. Hemos habilitado un acceso para que exploren la herramienta por su cuenta y vean si los datos de su sector realmente les aportan valor.</p>
-            
-            <div class="cta-container">
-                <a href="{{link_seguimiento}}" class="cta-button">Explorar Plataforma Minorista</a>
-            </div>
-            
-            <p class="signature">
-                Un saludo honesto,<br>
-                <strong>Equipo de Análisis de Datos</strong><br>
-                TomaPedidos
-            </p>
         </div>
-        <div class="footer">
-            <p>Este correo fue enviado a {{nombre_empresa}} porque identificamos sinergias en el sector mayorista.</p>
-            <p>© 2026 TomaPedidos B2B.</p>
+
+        <!-- Footer -->
+        <div style="background-color: #f1f5f9; padding: 24px 40px; text-align: center; font-size: 14px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+            <p style="margin-bottom: 8px;">Este correo fue enviado a {{nombre_empresa}} porque analizamos sinergias comerciales en su sector.</p>
+            <p style="margin: 0;">© 2026 DirectMin B2B Intelligence.</p>
         </div>
     </div>
 </body>

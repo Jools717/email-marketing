@@ -24,7 +24,7 @@ export async function sendMarketingEmail(to: string, data: { nombre_empresa: str
   const campana = "prospeccion_mayoreo_semanal";
   const contenido = "boton_explorar_plataforma_inegi";
   
-  const linkSeguimiento = `${baseUrl}/?utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${campana}&utm_content=${contenido}&ref=${data.lead_id}`;
+  const linkSeguimiento = `${baseUrl}/?utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${campana}&utm_content=${contenido}&ref=${data.lead_id}&empresa=${encodeURIComponent(data.nombre_empresa)}&email=${encodeURIComponent(to)}`;
 
   html = html
     .replace(/{{nombre_empresa}}/g, data.nombre_empresa)
@@ -36,7 +36,7 @@ export async function sendMarketingEmail(to: string, data: { nombre_empresa: str
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: to,
-    subject: `Nuevos puntos de venta minorista para ${data.nombre_empresa}`,
+    subject: `Inteligencia de mercado para la expansión de ${data.nombre_empresa}`,
     html: html,
   };
 
