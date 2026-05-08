@@ -46,7 +46,6 @@ export default function Dashboard() {
         console.log('GTM Dashboard: Enviando user_identified', utms.user_email || utms.nombre_empresa || utms.lead_id);
         window.dataLayer.push({
           event: 'user_identified',
-          debug_mode: true,
           lead_id: utms.lead_id,
           company_name: utms.nombre_empresa,
           user_email: utms.user_email,
@@ -110,7 +109,6 @@ export default function Dashboard() {
             }
             window.dataLayer.push({
               event: 'dashboard_search',
-              debug_mode: true,
               search_string: search,
               sector_filter: sectorFilter,
               state_filter: stateFilter,
@@ -155,7 +153,6 @@ export default function Dashboard() {
       console.log('GTM Dashboard: Enviando tab_change', tab, 'lead_id:', lead_id, 'empresa:', company_name, 'email:', user_email);
       window.dataLayer.push({
         event: 'tab_change',
-        debug_mode: true,
         tab_name: tab === 'table' ? 'Directorio y Búsqueda' : 'Mapa Interactivo',
         lead_id: lead_id,
         company_name: company_name,

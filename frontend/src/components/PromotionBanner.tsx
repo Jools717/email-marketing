@@ -45,7 +45,6 @@ const PromotionBanner = () => {
 
       window.dataLayer.push({
         event: 'promotion_banner_click',
-        debug_mode: true,
         banner_name: 'asesoria_mayorista',
         action: 'quiero_asesorarme',
         lead_id: lead_id,

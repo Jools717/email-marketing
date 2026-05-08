@@ -21,7 +21,6 @@ const WhatsAppButton = () => {
 
       window.dataLayer.push({
         event: 'whatsapp_contact',
-        debug_mode: true,
         platform: 'whatsapp',
         location: 'floating_button',
         lead_id: lead_id,

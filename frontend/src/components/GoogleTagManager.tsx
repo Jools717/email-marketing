@@ -48,7 +48,6 @@ export default function GoogleTagManager({ gtmId }: { gtmId: string }) {
     if (typeof window !== 'undefined' && window.dataLayer) {
       window.dataLayer.push({
         event: 'virtual_page_view',
-        debug_mode: true,
         page_path: pathname,
         page_search: searchParams.toString()
       });
