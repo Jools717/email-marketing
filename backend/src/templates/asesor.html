@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregunta sobre {{nombre_empresa}}</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1e293b; background-color: #f8fafc; margin: 0; padding: 0;">
+    <div style="max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 12px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);">
+        
+        <!-- Header con Foto del Asesor -->
+        <div style="background-color: #f1f5f9; padding: 30px 40px; border-bottom: 1px solid #e2e8f0; text-align: center;">
+            <img src="https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?q=80&w=150&auto=format&fit=crop" alt="Alejandro" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #ffffff; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin: 0 auto 15px auto; display: block;">
+            <div>
+                <h1 style="margin: 0; font-size: 24px; color: #0f172a;">¡Hola equipo de {{nombre_empresa}}! 👋</h1>
+                <p style="margin: 4px 0 0 0; color: #64748b; font-size: 16px;">Soy Alejandro, de Directorio Minorista.</p>
+            </div>
+        </div>
+
+        <div style="padding: 40px;">
+            
+            <!-- Caja 1: Gancho -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 20px; display: flex; align-items: flex-start;">
+                <div style="background-color: #e0e7ff; color: #4F46E5; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px; flex-shrink: 0; text-align: center; line-height: 40px;">
+                    🔍
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 16px; color: #334155;">Estuve investigando su negocio y veo que se dedican a <strong>{{enfoque_ventas}}</strong>. ¡Tienen muchísimo potencial en el sector de {{sector}}!</p>
+                </div>
+            </div>
+
+            <!-- Caja 2: La Oferta -->
+            <div style="background-color: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; margin-bottom: 30px; display: flex; align-items: flex-start;">
+                <div style="background-color: #dcfce7; color: #16a34a; border-radius: 8px; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-right: 15px; flex-shrink: 0; text-align: center; line-height: 40px;">
+                    🗺️
+                </div>
+                <div>
+                    <p style="margin: 0; font-size: 16px; color: #334155;">Para no quitarles tiempo con correos largos, <strong>les preparé un mapa interactivo gratis</strong> con todos los puntos de venta a nivel nacional que podrían comprarles hoy mismo.</p>
+                </div>
+            </div>
+
+            <!-- CTA -->
+            <div style="text-align: center; margin: 0 0 30px 0;">
+                <a href="{{link_seguimiento}}" style="display: block; background-color: #2563eb; color: #ffffff; padding: 18px 30px; text-decoration: none; border-radius: 8px; font-weight: 700; font-size: 18px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); border: 2px solid #1d4ed8;">
+                    VER MI MAPA DE CLIENTES
+                </a>
+            </div>
+            
+            <!-- Despedida Corta -->
+            <p style="font-size: 16px; color: #475569; text-align: center; margin: 0;">
+                Échenle un ojo y si les sirve la data, platicamos. ¡Saludos!
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background-color: #f1f5f9; padding: 20px; text-align: center; font-size: 12px; color: #94a3b8; border-top: 1px solid #e2e8f0;">
+            <p style="margin: 0;">© 2026 Directorio Minorista.</p>
+        </div>
+    </div>
+</body>
+</html>

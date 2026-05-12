@@ -1,11 +1,11 @@
 # Presentación del Negocio:
 
-DirectMin es una Agencia de Inteligencia de Datos y Partner de Crecimiento B2B.
+Directorio Minorista es una Agencia de Inteligencia de Datos y Partner de Crecimiento B2B.
 
-Si tuvieras que presentar a DirectMin como empresa ante un inversionista o un cliente grande, este sería el resumen de su identidad y propuesta de valor:
+Si tuvieras que presentar a Directorio Minorista como empresa ante un inversionista o un cliente grande, este sería el resumen de su identidad y propuesta de valor:
 
-🚀 DirectMin: Inteligencia de Mercado para la Expansión Mayorista
-DirectMin se posiciona en la intersección del Big Data y la Estrategia Comercial. Nuestra misión es eliminar la incertidumbre en la búsqueda de clientes B2B, transformando datos masivos en oportunidades de negocio reales y accionables.
+🚀 Directorio Minorista: Inteligencia de Mercado para la Expansión Mayorista
+Directorio Minorista se posiciona en la intersección del Big Data y la Estrategia Comercial. Nuestra misión es eliminar la incertidumbre en la búsqueda de clientes B2B, transformando datos masivos en oportunidades de negocio reales y accionables.
 
 ¿Qué hacemos? (Nuestros Pilares)
 Inteligencia Geográfica de Mercado: Procesamos y analizamos bases de datos a escala nacional (como el INEGI en México) para identificar con precisión quirúrgica dónde están los puntos de venta (minoristas) que tu empresa necesita.
@@ -13,7 +13,7 @@ Consultoría B2B Automatizada: No creemos en el spam masivo. Diseñamos sistemas
 Visualización Estratégica: A través de nuestro Dashboard de Inteligencia, permitimos que los directores comerciales vean su mercado en mapas interactivos, filtren por zonas de oportunidad y tomen decisiones basadas en datos, no en suposiciones.
 Trazabilidad y Atribución: Sabemos exactamente quién hace clic, qué busca y qué le interesa. Nuestra infraestructura de tracking permite medir el retorno de inversión (ROI) de cada esfuerzo de marketing en tiempo real.
 Nuestra Filosofía: "Honestidad sobre Ventas"
-A diferencia de otras plataformas de marketing, DirectMin se presenta como un aliado consultivo. No buscamos "vender" en el primer contacto, sino ofrecer valor inmediato (un mapa de clientes potenciales) para construir una relación de confianza que desemboque en negocios de alto valor.
+A diferencia de otras plataformas de marketing, Directorio Minorista se presenta como un aliado consultivo. No buscamos "vender" en el primer contacto, sino ofrecer valor inmediato (un mapa de clientes potenciales) para construir una relación de confianza que desemboque en negocios de alto valor.
 
 
 

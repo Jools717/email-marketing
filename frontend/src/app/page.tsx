@@ -11,7 +11,7 @@ export default function Home() {
               Directorio Minorista México
             </h1>
             <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-2xl text-lg">
-              Explora millones de puntos de venta y establecimientos a lo largo de todo el país.
+              Explora millones de puntos de venta y establecimientos a lo largo de todo el país
             </p>
           </div>
           <div className="mt-4 md:mt-0 flex items-center space-x-3 bg-blue-600/10 text-blue-600 dark:text-blue-400 px-4 py-2 rounded-full font-medium">

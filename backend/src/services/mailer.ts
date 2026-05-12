@@ -13,16 +13,17 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-export async function sendMarketingEmail(to: string, data: { nombre_empresa: string, enfoque_ventas: string, sector: string, lead_id: number }) {
-  const templatePath = path.join(__dirname, '../templates/marketing.html');
+export async function sendMarketingEmail(to: string, data: { nombre_empresa: string, enfoque_ventas: string, sector: string, lead_id: number }, template: 'marketing' | 'asesor' = 'marketing') {
+  const templateFilename = template === 'asesor' ? 'asesor.html' : 'marketing.html';
+  const templatePath = path.join(__dirname, `../templates/${templateFilename}`);
   let html = await fs.readFile(templatePath, 'utf8');
 
   // Configuración de seguimiento (UTMs en español y detallados)
   const baseUrl = process.env.BASE_URL || "http://localhost:3000"; 
   const fuente = "correo_directo_mexico";
   const medio = "email_marketing_proactivo";
-  const campana = "prospeccion_mayoreo_semanal";
-  const contenido = "boton_explorar_plataforma_inegi";
+  const campana = template === 'asesor' ? "prospeccion_asesor" : "prospeccion_mayoreo_semanal";
+  const contenido = template === 'asesor' ? "link_asesor_texto" : "boton_explorar_plataforma_inegi";
   
   const linkSeguimiento = `${baseUrl}/?utm_source=${fuente}&utm_medium=${medio}&utm_campaign=${campana}&utm_content=${contenido}&ref=${data.lead_id}&empresa=${encodeURIComponent(data.nombre_empresa)}&email=${encodeURIComponent(to)}`;
 
@@ -33,10 +34,15 @@ export async function sendMarketingEmail(to: string, data: { nombre_empresa: str
     .replace(/{{base_url}}/g, baseUrl)
     .replace(/{{link_seguimiento}}/g, linkSeguimiento);
 
+  // Asuntos Clickbait
+  const subject = template === 'asesor' 
+    ? `Pregunta rápida sobre las ventas de ${data.nombre_empresa} 👀`
+    : `El mapa exacto de tus próximos clientes 🗺️`;
+
   const mailOptions = {
     from: process.env.EMAIL_FROM,
     to: to,
-    subject: `Inteligencia de mercado para la expansión de ${data.nombre_empresa}`,
+    subject: subject,
     html: html,
   };
 

@@ -10,20 +10,25 @@ async function test() {
 
   console.log(`\n🚀 Iniciando envío de prueba para: ${testEmail}`);
   console.log(`Remitente: ${process.env.EMAIL_USER}`);
-
-  const success = await sendMarketingEmail(testEmail, {
+  
+  const data = {
     nombre_empresa: 'Tu Empresa Test',
     enfoque_ventas: 'Venta de productos electrónicos al por mayor',
     sector: 'Tecnología y Electrónica',
     lead_id: 999
-  });
+  };
 
-  if (success) {
-    console.log('\n✅ ¡Correo de prueba enviado con éxito!');
-    console.log('Revisa tu bandeja de entrada (y la carpeta de spam por si acaso).');
+  console.log('\nEnviando plantilla Corporativa (Directorio Minorista)...');
+  const success1 = await sendMarketingEmail(testEmail, data, 'marketing');
+
+  console.log('\nEnviando plantilla Asesor (Alejandro)...');
+  const success2 = await sendMarketingEmail(testEmail, data, 'asesor');
+
+  if (success1 && success2) {
+    console.log('\n✅ ¡Ambos correos de prueba enviados con éxito!');
+    console.log('Revisa tu bandeja de entrada para comparar las dos estrategias.');
   } else {
-    console.error('\n❌ Error al enviar el correo.');
-    console.log('Verifica que tu EMAIL_USER y EMAIL_PASS sean correctos en el archivo .env');
+    console.error('\n❌ Error al enviar uno o ambos correos.');
   }
 
   process.exit(0);
