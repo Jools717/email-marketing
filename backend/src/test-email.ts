@@ -6,11 +6,11 @@ import * as path from 'path';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 async function test() {
-  const testEmail = 'jaimeurieltorres@gmail.com';
+  const testEmail = 'juliorj717@gmail.com';
 
   console.log(`\n🚀 Iniciando envío de prueba para: ${testEmail}`);
   console.log(`Remitente: ${process.env.EMAIL_USER}`);
-  
+
   const data = {
     nombre_empresa: 'Tu Empresa Test',
     enfoque_ventas: 'Venta de productos electrónicos al por mayor',

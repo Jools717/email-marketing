@@ -4,21 +4,22 @@ import React from 'react';
 
 const WhatsAppButton = () => {
   const handleClick = () => {
+    let lead_id = null;
+    let company_name = null;
+    let user_email = null;
+
+    try {
+      const stored = localStorage.getItem('atribucion_marketing_mexico');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        lead_id = parsed.lead_id;
+        company_name = parsed.nombre_empresa;
+        user_email = parsed.user_email;
+      }
+    } catch (e) {}
+
     // Evento para GTM/Tag Manager
     if (typeof window !== 'undefined' && window.dataLayer) {
-      let lead_id = null;
-      let company_name = null;
-      let user_email = null;
-      try {
-        const stored = localStorage.getItem('atribucion_marketing_mexico');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          lead_id = parsed.lead_id;
-          company_name = parsed.nombre_empresa;
-          user_email = parsed.user_email;
-        }
-      } catch (e) {}
-
       window.dataLayer.push({
         event: 'whatsapp_contact',
         platform: 'whatsapp',
@@ -28,7 +29,14 @@ const WhatsAppButton = () => {
         user_email: user_email
       });
     }
-    window.open('https://wa.me/573000000000', '_blank');
+
+    // Construir mensaje personalizado
+    let message = "Hola Alejandro, me interesa saber más sobre el Directorio Minorista.";
+    if (company_name) {
+      message = `Hola Alejandro, soy de la empresa ${company_name}. Me interesa saber más sobre el Directorio Minorista y cómo pueden ayudarnos a mapear nuestro mercado.`;
+    }
+
+    window.open(`https://wa.me/573017848997?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (

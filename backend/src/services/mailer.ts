@@ -36,7 +36,7 @@ export async function sendMarketingEmail(to: string, data: { nombre_empresa: str
 
   // Asuntos Clickbait
   const subject = template === 'asesor' 
-    ? `Pregunta rápida sobre las ventas de ${data.nombre_empresa} 👀`
+    ? `"${data.nombre_empresa}" estás perdiendo más clientes.`
     : `El mapa exacto de tus próximos clientes 🗺️`;
 
   const mailOptions = {
