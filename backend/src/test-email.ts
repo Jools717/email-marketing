@@ -1,4 +1,4 @@
-import { sendMarketingEmail } from './services/mailer';
+import { sendMarketingEmail, emailUser } from './services/mailer';
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -9,7 +9,7 @@ async function test() {
   const testEmail = 'juliorj717@gmail.com';
 
   console.log(`\n🚀 Iniciando envío de prueba para: ${testEmail}`);
-  console.log(`Remitente: ${process.env.EMAIL_USER}`);
+  console.log(`Remitente: ${emailUser}`);
 
   const data = {
     nombre_empresa: 'Tu Empresa Test',

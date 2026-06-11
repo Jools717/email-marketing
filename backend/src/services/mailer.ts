@@ -5,13 +5,34 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const transporter = nodemailer.createTransport({
-  service: process.env.EMAIL_SERVICE,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-});
+const isSmtp = process.env.EMAIL_SERVICE?.toLowerCase() === 'smtp';
+
+export const emailUser = isSmtp ? process.env.SMTP_USER : process.env.GMAIL_USER;
+export const emailPass = isSmtp ? process.env.SMTP_PASS : process.env.GMAIL_PASS;
+export const emailFrom = isSmtp ? process.env.SMTP_FROM : process.env.GMAIL_FROM;
+
+const transportConfig = isSmtp
+  ? {
+      host: process.env.SMTP_HOST || 'mail.comtor.net',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: process.env.SMTP_SECURE === 'true', // false para 587 (STARTTLS)
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+      tls: {
+        rejectUnauthorized: false, // Evita fallos comunes en servidores SMTP personalizados
+      },
+    }
+  : {
+      service: 'gmail',
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+    };
+
+const transporter = nodemailer.createTransport(transportConfig);
 
 export async function sendMarketingEmail(to: string, data: { nombre_empresa: string, enfoque_ventas: string, sector: string, lead_id: number }, template: 'marketing' | 'asesor' = 'marketing') {
   const templateFilename = template === 'asesor' ? 'asesor.html' : 'marketing.html';
@@ -40,7 +61,7 @@ export async function sendMarketingEmail(to: string, data: { nombre_empresa: str
     : `El mapa exacto de tus próximos clientes 🗺️`;
 
   const mailOptions = {
-    from: process.env.EMAIL_FROM,
+    from: emailFrom,
     to: to,
     subject: subject,
     html: html,

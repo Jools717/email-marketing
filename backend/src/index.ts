@@ -1,4 +1,4 @@
-import { getMexicoLeads } from './database';
+import { getMexicoLeads, updateLeadStatus } from './database';
 import { sendMarketingEmail } from './services/mailer';
 
 // Función para pausar la ejecución (evitar bloqueos por spam)
