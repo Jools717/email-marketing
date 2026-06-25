@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node dist/index.js",
     "dev": "ts-node src/index.ts",
+    "campaign:mexico": "ts-node src/index_mexico.ts",
+    "campaign:colombia": "ts-node src/index_colombia.ts",
     "test": "ts-node src/test-email.ts",
     "build": "tsc"
   },

@@ -1,84 +1,18 @@
-import { getMexicoLeads, updateLeadStatus } from './database';
-import { sendMarketingEmail } from './services/mailer';
+import * as dotenv from 'dotenv';
+import * as path from 'path';
 
-// Función para pausar la ejecución (evitar bloqueos por spam)
-const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+dotenv.config();
 
-async function main() {
-  console.log("🚀 Iniciando campaña A/B Testing (50/50) para México...");
-  
-  // 1. Obtener hasta 100 leads pendientes
-  const leads = await getMexicoLeads(100);
-  console.log(`Se encontraron ${leads.length} leads listos para procesar.`);
+const country = (process.env.CAMPAIGN_COUNTRY || 'mexico').toLowerCase();
 
-  if (leads.length === 0) {
-    console.log("No hay leads pendientes. Saliendo...");
-    process.exit(0);
+async function runCampaign() {
+  if (country === 'colombia') {
+    console.log("👉 Redireccionando a campaña de Colombia...");
+    await import('./index_colombia');
+  } else {
+    console.log("👉 Redireccionando a campaña de México...");
+    await import('./index_mexico');
   }
-
-  const SLEEP_MS = parseInt(process.env.SLEEP_MS || '2000');
-  let successCount = 0;
-  let errorCount = 0;
-
-  // 2. Iterar sobre cada lead con lógica A/B
-  for (let i = 0; i < leads.length; i++) {
-    const lead = leads[i];
-    
-    // Alternar template: pares -> marketing, impares -> asesor
-    const template: 'marketing' | 'asesor' = i % 2 === 0 ? 'marketing' : 'asesor';
-
-    const emailList = lead.emails.split(',')
-      .map(e => e.trim())
-      .filter(e => e !== '');
-    
-    if (emailList.length === 0) continue;
-
-    console.log(`\n[${i + 1}/${leads.length}] Empresa: ${lead.nombre_empresa}`);
-    console.log(`   Template: ${template.toUpperCase()}`);
-    
-    // Usamos el primer email de la lista para el tracking principal
-    const mainEmail = emailList[0];
-    let leadSuccess = false;
-    let lastError = '';
-
-    for (const email of emailList) {
-      console.log(`   -> Enviando a: ${email}`);
-      
-      const success = await sendMarketingEmail(email, {
-        nombre_empresa: lead.nombre_empresa,
-        enfoque_ventas: lead.enfoque_ventas,
-        sector: lead.sector,
-        lead_id: lead.id
-      }, template);
-
-      if (success) {
-        leadSuccess = true;
-        successCount++;
-      } else {
-        errorCount++;
-        lastError = 'Error en envío SMTP';
-      }
-
-      await sleep(SLEEP_MS);
-    }
-
-    // 3. Actualizar la base de datos con el resultado
-    await updateLeadStatus(
-      lead.id, 
-      leadSuccess ? 'enviado' : 'error', 
-      template, 
-      leadSuccess ? undefined : lastError
-    );
-  }
-
-  console.log("\n=================================");
-  console.log("Resumen de la campaña A/B:");
-  console.log(`Total procesados: ${leads.length}`);
-  console.log(`Correos exitosos: ${successCount}`);
-  console.log(`Errores: ${errorCount}`);
-  console.log("=================================");
-  
-  process.exit(0);
 }
 
-main().catch(console.error);
+runCampaign().catch(console.error);

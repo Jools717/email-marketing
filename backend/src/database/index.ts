@@ -19,8 +19,14 @@ export interface Lead {
   emails: string;
   sector: string;
   scoring_valor: number;
+  productos_principales?: string;
+  telefonos_contacto?: string;
   email_1_status?: string;
+  nombre_comercial?: string;
+  descripcion_corta?: string;
 }
+
+// === MEXICO DATABASE OPERATIONS ===
 
 export async function getMexicoLeads(limit = 100): Promise<Lead[]> {
   const query = `
@@ -36,9 +42,38 @@ export async function getMexicoLeads(limit = 100): Promise<Lead[]> {
   return result.rows;
 }
 
-export async function updateLeadStatus(id: number, status: string, template: string, error?: string) {
+export async function updateMexicoLeadStatus(id: number, status: string, template: string, error?: string) {
   const query = `
     UPDATE "leads-al-por-mayor-mexico"
+    SET email_1_status = $1,
+        email_1_template = $2,
+        email_1_sent_at = NOW(),
+        email_error = $3
+    WHERE id = $4
+  `;
+  
+  await pool.query(query, [status, template, error || null, id]);
+}
+
+// === COLOMBIA DATABASE OPERATIONS ===
+
+export async function getColombiaLeads(limit = 100): Promise<Lead[]> {
+  const query = `
+    SELECT id, nit, nombre_empresa, enfoque_ventas, emails, sector, scoring_valor, productos_principales, telefonos_contacto, email_1_status, nombre_comercial, descripcion_corta
+    FROM "empresas_leads_colombia"
+    WHERE emails IS NOT NULL AND emails != ''
+    AND (email_1_status IS NULL OR email_1_status = 'pendiente' OR email_1_status = 'error')
+    ORDER BY created_at DESC
+    LIMIT $1
+  `;
+  
+  const result = await pool.query(query, [limit]);
+  return result.rows;
+}
+
+export async function updateColombiaLeadStatus(id: number, status: string, template: string, error?: string) {
+  const query = `
+    UPDATE "empresas_leads_colombia"
     SET email_1_status = $1,
         email_1_template = $2,
         email_1_sent_at = NOW(),

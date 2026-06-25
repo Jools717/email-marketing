@@ -17,8 +17,13 @@ export async function POST(request: Request) {
     // Capturar IP del cliente (depende de cómo esté configurado el proxy/Vercel)
     const ip = request.headers.get('x-forwarded-for') || '0.0.0.0';
 
+    // Seleccionar tabla según el país de origen (fuente)
+    const targetTable = (fuente && fuente.includes('colombia'))
+      ? 'marketing_clicks_email_colombia'
+      : 'marketing_clicks_email_mexico';
+
     const query = `
-      INSERT INTO marketing_clicks_email_mexico 
+      INSERT INTO ${targetTable} 
       (lead_id, fuente, medio, campana, contenido, ip_usuario, user_agent, url_completa)
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
       RETURNING id

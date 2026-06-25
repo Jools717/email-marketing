@@ -34,8 +34,12 @@ export default function Dashboard() {
 
     // Si detectamos que viene de una campaña (fuente o ref)
     if (utms.fuente || utms.lead_id) {
-      // Guardar en LocalStorage para persistencia en el navegador
-      localStorage.setItem('atribucion_marketing_mexico', JSON.stringify({
+      // Guardar en LocalStorage según la procedencia
+      const storageKey = (utms.fuente && utms.fuente.includes('colombia'))
+        ? 'atribucion_marketing_colombia'
+        : 'atribucion_marketing_mexico';
+
+      localStorage.setItem(storageKey, JSON.stringify({
         ...utms,
         fecha: new Date().toISOString()
       }));
@@ -53,6 +57,22 @@ export default function Dashboard() {
           utm_medium: utms.medio,
           utm_campaign: utms.campana,
           utm_content: utms.contenido
+        });
+      }
+
+      // Lógica de redirección para campaña Colombia
+      if (utms.fuente === 'correo_directo_colombia') {
+        console.log('Campaña Colombia detectada. Registrando clic y redireccionando a Tomapedidos...');
+        fetch('/api/track-click', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(utms),
+        })
+        .catch(err => console.error('Error track-click:', err))
+        .finally(() => {
+          window.location.href = `https://www.tomapedidos.app/tomapedidos/lead-email-campaign-col.page${window.location.search}`;
         });
       }
     }
@@ -98,7 +118,7 @@ export default function Dashboard() {
 
             if (!lead_id) {
               try {
-                const stored = localStorage.getItem('atribucion_marketing_mexico');
+                const stored = localStorage.getItem('atribucion_marketing_mexico') || localStorage.getItem('atribucion_marketing_colombia');
                 if (stored) {
                   const parsed = JSON.parse(stored);
                   lead_id = parsed.lead_id;
@@ -140,7 +160,7 @@ export default function Dashboard() {
 
       if (!lead_id) {
         try {
-          const stored = localStorage.getItem('atribucion_marketing_mexico');
+          const stored = localStorage.getItem('atribucion_marketing_mexico') || localStorage.getItem('atribucion_marketing_colombia');
           if (stored) {
             const parsed = JSON.parse(stored);
             lead_id = parsed.lead_id;
