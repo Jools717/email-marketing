@@ -22,8 +22,11 @@ export interface Lead {
   productos_principales?: string;
   telefonos_contacto?: string;
   email_1_status?: string;
+  email_1_template?: string;
   nombre_comercial?: string;
   descripcion_corta?: string;
+  email_2_status?: string;
+  email_2_template?: string;
 }
 
 // === MEXICO DATABASE OPERATIONS ===
@@ -83,3 +86,60 @@ export async function updateColombiaLeadStatus(id: number, status: string, templ
   
   await pool.query(query, [status, template, error || null, id]);
 }
+
+export async function getMexicoLeadsForEmail2(limit = 100): Promise<Lead[]> {
+  const query = `
+    SELECT id, nit, nombre_empresa, enfoque_ventas, emails, sector, scoring_valor, email_1_status, email_1_template
+    FROM "leads-al-por-mayor-mexico"
+    WHERE emails IS NOT NULL AND emails != ''
+    AND email_1_status = 'enviado'
+    AND (email_2_status IS NULL OR email_2_status = 'pendiente' OR email_2_status = 'error')
+    ORDER BY email_1_sent_at ASC
+    LIMIT $1
+  `;
+  
+  const result = await pool.query(query, [limit]);
+  return result.rows;
+}
+
+export async function updateLeadStatusEmail2(id: number, status: string, template: string, error?: string) {
+  const query = `
+    UPDATE "leads-al-por-mayor-mexico"
+    SET email_2_status = $1,
+        email_2_template = $2,
+        email_2_sent_at = NOW(),
+        email_2_error = $3
+    WHERE id = $4
+  `;
+  
+  await pool.query(query, [status, template, error || null, id]);
+}
+
+export async function getColombiaLeadsForEmail2(limit = 100): Promise<Lead[]> {
+  const query = `
+    SELECT id, nit, nombre_empresa, enfoque_ventas, emails, sector, scoring_valor, productos_principales, telefonos_contacto, email_1_status, email_1_template, nombre_comercial, descripcion_corta
+    FROM "empresas_leads_colombia"
+    WHERE emails IS NOT NULL AND emails != ''
+    AND email_1_status = 'enviado'
+    AND (email_2_status IS NULL OR email_2_status = 'pendiente' OR email_2_status = 'error')
+    ORDER BY email_1_sent_at ASC
+    LIMIT $1
+  `;
+  
+  const result = await pool.query(query, [limit]);
+  return result.rows;
+}
+
+export async function updateColombiaLeadStatusEmail2(id: number, status: string, template: string, error?: string) {
+  const query = `
+    UPDATE "empresas_leads_colombia"
+    SET email_2_status = $1,
+        email_2_template = $2,
+        email_2_sent_at = NOW(),
+        email_2_error = $3
+    WHERE id = $4
+  `;
+  
+  await pool.query(query, [status, template, error || null, id]);
+}
+

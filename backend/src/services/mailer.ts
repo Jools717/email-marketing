@@ -23,6 +23,7 @@ const transportConfig = isSmtp
       },
       tls: {
         rejectUnauthorized: false, // Evita fallos comunes en servidores SMTP personalizados
+        ciphers: 'HIGH:!aNULL:!3DES:!DH', // Evita el error "dh key too small"
       },
     }
   : {
@@ -126,6 +127,14 @@ function generarIntroduccionColombiaMarketing(lead: { id: number, nombre_empresa
   return intro;
 }
 
+function extractEmail(input: string): string {
+  const match = input.match(/<([^>]+)>/);
+  if (match) {
+    return match[1].trim();
+  }
+  return input.replace(/['"]/g, '').trim();
+}
+
 export async function sendMarketingEmail(
   to: string, 
   data: { 
@@ -217,12 +226,21 @@ export async function sendMarketingEmail(
     }
   }
 
-  const mailOptions = {
+  const cleanEnvelopeFrom = emailFrom ? extractEmail(emailFrom) : undefined;
+
+  const mailOptions: any = {
     from: senderFrom,
     to: to,
     subject: subject,
     html: html,
   };
+
+  if (cleanEnvelopeFrom) {
+    mailOptions.envelope = {
+      from: cleanEnvelopeFrom,
+      to: to
+    };
+  }
 
   try {
     const info = await transporter.sendMail(mailOptions);

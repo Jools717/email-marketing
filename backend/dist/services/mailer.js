@@ -116,6 +116,13 @@ function generarIntroduccionColombiaMarketing(lead) {
     }
     return intro;
 }
+function extractEmail(input) {
+    const match = input.match(/<([^>]+)>/);
+    if (match) {
+        return match[1].trim();
+    }
+    return input.replace(/['"]/g, '').trim();
+}
 async function sendMarketingEmail(to, data, template = 'marketing', country = 'mexico') {
     // Determinar nombre de archivo basado en el país y el template
     const templateFilename = country === 'colombia'
@@ -182,12 +189,19 @@ async function sendMarketingEmail(to, data, template = 'marketing', country = 'm
             senderFrom = `"Tomapedidos" <santiagotorres@tomapedidos.app>`;
         }
     }
+    const cleanEnvelopeFrom = exports.emailFrom ? extractEmail(exports.emailFrom) : undefined;
     const mailOptions = {
         from: senderFrom,
         to: to,
         subject: subject,
         html: html,
     };
+    if (cleanEnvelopeFrom) {
+        mailOptions.envelope = {
+            from: cleanEnvelopeFrom,
+            to: to
+        };
+    }
     try {
         const info = await transporter.sendMail(mailOptions);
         console.log(`Correo enviado a: ${to} (${country.toUpperCase()} - ${template.toUpperCase()}) - ID: ${info.messageId}`);
