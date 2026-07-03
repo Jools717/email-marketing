@@ -115,20 +115,34 @@ export async function updateLeadStatusEmail2(id: number, status: string, templat
   await pool.query(query, [status, template, error || null, id]);
 }
 
-export async function getColombiaLeadsForEmail2(limit = 100): Promise<Lead[]> {
+export async function getColombiaLeadsForEmail2(limit = 100, minHoursPassed = 24): Promise<Lead[]> {
   const query = `
     SELECT id, nit, nombre_empresa, enfoque_ventas, emails, sector, scoring_valor, productos_principales, telefonos_contacto, email_1_status, email_1_template, nombre_comercial, descripcion_corta
     FROM "empresas_leads_colombia"
     WHERE emails IS NOT NULL AND emails != ''
     AND email_1_status = 'enviado'
     AND (email_2_status IS NULL OR email_2_status = 'pendiente' OR email_2_status = 'error')
+    AND email_1_sent_at < NOW() - $2 * INTERVAL '1 hour'
     ORDER BY email_1_sent_at ASC
     LIMIT $1
   `;
   
-  const result = await pool.query(query, [limit]);
+  const result = await pool.query(query, [limit, minHoursPassed]);
   return result.rows;
 }
+
+export async function countRecentColombiaEmail1(hours = 24): Promise<number> {
+  const query = `
+    SELECT COUNT(*)::integer as count 
+    FROM "empresas_leads_colombia"
+    WHERE email_1_status = 'enviado'
+    AND email_1_sent_at >= NOW() - $1 * INTERVAL '1 hour'
+  `;
+  
+  const result = await pool.query(query, [hours]);
+  return result.rows[0].count || 0;
+}
+
 
 export async function updateColombiaLeadStatusEmail2(id: number, status: string, template: string, error?: string) {
   const query = `
