@@ -39,7 +39,7 @@ const path = __importStar(require("path"));
 // Cargar variables de entorno manualmente para el script
 dotenv.config({ path: path.join(__dirname, '../.env') });
 async function test() {
-    const testEmail = 'jaimeurieltorres@hotmail.com';
+    const testEmail = 'juliorj717@gmail.com';
     console.log(`\n🚀 Iniciando envío de prueba combinado para: ${testEmail}`);
     console.log(`Remitente SMTP: ${mailer_1.emailUser}`);
     // 1. Datos para prueba de Colombia

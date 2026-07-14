@@ -26,6 +26,7 @@ const transportConfig = isSmtp
         },
         tls: {
             rejectUnauthorized: false, // Evita fallos comunes en servidores SMTP personalizados
+            ciphers: 'HIGH:!aNULL:!3DES:!DH', // Evita el error "dh key too small"
         },
     }
     : {

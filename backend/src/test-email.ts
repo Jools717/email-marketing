@@ -6,7 +6,7 @@ import * as path from 'path';
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
 async function test() {
-  const testEmail = 'jaimeurieltorres@hotmail.com';
+  const testEmail = 'juliorj717@gmail.com'
 
   console.log(`\n🚀 Iniciando envío de prueba combinado para: ${testEmail}`);
   console.log(`Remitente SMTP: ${emailUser}`);
