@@ -11,6 +11,21 @@ export const pool = new Pool({
   port: parseInt(process.env.DB_PORT || '5432'),
 });
 
+export async function queryWithRetry(text: string, params?: any[], retries = 3, delayMs = 2000): Promise<any> {
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      return await pool.query(text, params);
+    } catch (err: any) {
+      console.error(`⚠️ Error en base de datos (intento ${attempt}/${retries}): ${err.message}`);
+      if (attempt === retries) {
+        throw err;
+      }
+      console.log(`🔌 Esperando ${delayMs / 1000}s para reintentar la consulta...`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+}
+
 export interface Lead {
   id: number;
   nit: string;
@@ -41,7 +56,7 @@ export async function getMexicoLeads(limit = 100): Promise<Lead[]> {
     LIMIT $1
   `;
   
-  const result = await pool.query(query, [limit]);
+  const result = await queryWithRetry(query, [limit]);
   return result.rows;
 }
 
@@ -55,7 +70,7 @@ export async function updateMexicoLeadStatus(id: number, status: string, templat
     WHERE id = $4
   `;
   
-  await pool.query(query, [status, template, error || null, id]);
+  await queryWithRetry(query, [status, template, error || null, id]);
 }
 
 // === COLOMBIA DATABASE OPERATIONS ===
@@ -70,7 +85,7 @@ export async function getColombiaLeads(limit = 100): Promise<Lead[]> {
     LIMIT $1
   `;
   
-  const result = await pool.query(query, [limit]);
+  const result = await queryWithRetry(query, [limit]);
   return result.rows;
 }
 
@@ -84,7 +99,7 @@ export async function updateColombiaLeadStatus(id: number, status: string, templ
     WHERE id = $4
   `;
   
-  await pool.query(query, [status, template, error || null, id]);
+  await queryWithRetry(query, [status, template, error || null, id]);
 }
 
 export async function getMexicoLeadsForEmail2(limit = 100): Promise<Lead[]> {
@@ -98,7 +113,7 @@ export async function getMexicoLeadsForEmail2(limit = 100): Promise<Lead[]> {
     LIMIT $1
   `;
   
-  const result = await pool.query(query, [limit]);
+  const result = await queryWithRetry(query, [limit]);
   return result.rows;
 }
 
@@ -112,7 +127,7 @@ export async function updateLeadStatusEmail2(id: number, status: string, templat
     WHERE id = $4
   `;
   
-  await pool.query(query, [status, template, error || null, id]);
+  await queryWithRetry(query, [status, template, error || null, id]);
 }
 
 export async function getColombiaLeadsForEmail2(limit = 100, minHoursPassed = 24): Promise<Lead[]> {
@@ -127,7 +142,7 @@ export async function getColombiaLeadsForEmail2(limit = 100, minHoursPassed = 24
     LIMIT $1
   `;
   
-  const result = await pool.query(query, [limit, minHoursPassed]);
+  const result = await queryWithRetry(query, [limit, minHoursPassed]);
   return result.rows;
 }
 
@@ -139,7 +154,7 @@ export async function countRecentColombiaEmail1(hours = 24): Promise<number> {
     AND email_1_sent_at >= NOW() - $1 * INTERVAL '1 hour'
   `;
   
-  const result = await pool.query(query, [hours]);
+  const result = await queryWithRetry(query, [hours]);
   return result.rows[0].count || 0;
 }
 
@@ -154,6 +169,6 @@ export async function updateColombiaLeadStatusEmail2(id: number, status: string,
     WHERE id = $4
   `;
   
-  await pool.query(query, [status, template, error || null, id]);
+  await queryWithRetry(query, [status, template, error || null, id]);
 }
 

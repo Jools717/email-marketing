@@ -1,4 +1,4 @@
-# Email Marketing México & Dashboard INEGI
+# Email Marketing (Colombia & México) & Dashboard B2B
 
 Sistema integral para el procesamiento, visualización y uso de datos de contacto de establecimientos minoristas en México, integrado con campañas de email marketing automatizado (A/B testing) e infraestructura de atribución y tracking analítico (GTM y Meta Pixel).
 
@@ -133,9 +133,21 @@ npm run dev
 Accede a `http://localhost:3000`.
 
 ### 2. Ejecutar la Campaña de Email Marketing (Backend)
-Para procesar y enviar correos de la campaña a los leads calificados pendientes de envío:
+
+> [!IMPORTANTE]
+> #### 🇨🇴 ¿Cómo ejecutar la Campaña para COLOMBIA?
+> Para iniciar o reanudar el envío automatizado de correos a la base de datos de **Colombia** (Tomapedidos), abre una terminal y ejecuta:
+> ```bash
+> cd backend
+> npm run campaign:colombia
+> ```
+> *Este comando gestiona de forma inteligente el límite de envíos diarios, reanudaciones de lotes e invierte las plantillas para el Email 2 de seguimiento.*
+
+#### 🇲🇽 Ejecutar Campaña para MÉXICO
 ```bash
 cd backend
+npm run campaign:mexico
+# O el comando por defecto:
 npm run dev
 ```
 *(Para producción utiliza: `npm run build && npm start`)*
