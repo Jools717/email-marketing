@@ -1,0 +1,135 @@
+ENDPOINT DE NOTIFICACION: POST /api/notify
+==========================================
+
+Envia un mensaje de texto de WhatsApp a un numero, desde el bot, sin necesidad
+de conocer la sesion.
+
+
+REQUEST
+-------
+
+  POST /api/notify
+  Content-Type: application/json
+  X-Admin-Token: <token>
+
+
+BODY (JSON)
+-----------
+
+  to    (string, requerido)
+        Numero de destino con codigo de pais. Acepta cualquier formato:
+          +54 9 11 1234-5678
+          5491112345678
+          5491112345678@s.whatsapp.net  (JID completo)
+
+  text  (string, requerido)
+        Texto del mensaje. Admite el formato de WhatsApp: *negrita*,
+        _cursiva_, emojis y saltos de linea (\n).
+
+
+AUTENTICACION
+-------------
+
+  - Desde fuera del servidor: el token administrativo es obligatorio.
+    Se envia en el header  X-Admin-Token: <token>
+    o en                   Authorization: Bearer <token>
+
+  - Desde el mismo servidor (127.0.0.1 / ::1): no hace falta token.
+
+  El token se toma de la variable de entorno CHABITO_ADMIN_TOKEN (o
+  ADMIN_TOKEN). Si no esta definida, se genera uno nuevo en cada arranque y se
+  imprime en la consola. En produccion conviene definirla para que el token no
+  cambie.
+
+
+COMPORTAMIENTO
+--------------
+
+  1. Busca una sesion de WhatsApp con estado "open" (conectada). Si hay
+     varias, usa siempre la primera en orden alfabetico de UUID.
+  2. Normaliza el numero: quita +, espacios, guiones y parentesis.
+  3. Verifica que el numero exista en WhatsApp antes de enviar.
+  4. Envia el mensaje.
+
+
+RESPUESTAS
+----------
+
+  200  Mensaje enviado
+       { "success": true, "message": "Notificación enviada correctamente", "session": "<uuid usado>" }
+
+  400  Falta "to" o "text"
+       { "error": "Faltan parámetros \"to\" o \"text\" en el body." }
+
+  401  Token ausente o incorrecto (fuera de localhost)
+       { "error": "Token administrativo requerido.", "message": "..." }
+
+  503  No hay ninguna sesion de WhatsApp conectada
+       { "error": "No hay ninguna sesión de WhatsApp conectada para enviar el mensaje." }
+
+  500  Fallo el envio (numero inexistente en WhatsApp, conexion caida durante
+       el envio, etc.)
+       { "error": "Error enviando la notificación", "details": "<motivo>" }
+
+
+EJEMPLOS
+--------
+
+curl:
+
+  curl -X POST https://tu-servidor.com/api/notify \
+    -H "Content-Type: application/json" \
+    -H "X-Admin-Token: $CHABITO_ADMIN_TOKEN" \
+    -d '{"to": "+54 9 11 1234-5678", "text": "Hola, tu pedido *#1234* está listo 🚚"}'
+
+
+JavaScript (fetch):
+
+  const res = await fetch('https://tu-servidor.com/api/notify', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Admin-Token': process.env.CHABITO_ADMIN_TOKEN,
+    },
+    body: JSON.stringify({
+      to: '+5491112345678',
+      text: 'Hola, tu pedido *#1234* está listo 🚚',
+    }),
+  });
+
+  if (!res.ok) {
+    const err = await res.json();
+    throw new Error(`${res.status}: ${err.error} ${err.details ?? ''}`);
+  }
+
+
+PHP:
+
+  $ch = curl_init('https://tu-servidor.com/api/notify');
+  curl_setopt_array($ch, [
+      CURLOPT_POST => true,
+      CURLOPT_RETURNTRANSFER => true,
+      CURLOPT_HTTPHEADER => [
+          'Content-Type: application/json',
+          'X-Admin-Token: ' . getenv('CHABITO_ADMIN_TOKEN'),
+      ],
+      CURLOPT_POSTFIELDS => json_encode([
+          'to' => '+5491112345678',
+          'text' => 'Hola, tu pedido *#1234* está listo 🚚',
+      ]),
+  ]);
+  $response = curl_exec($ch);
+  $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+  curl_close($ch);
+
+
+NOTAS
+-----
+
+  - El endpoint es sincrono: responde cuando WhatsApp acepto el mensaje, no
+    cuando el destinatario lo leyo.
+  - Ante un 503, el bot esta desconectado: hay que revisar la sesion desde el
+    panel (/#/chatbots) y volver a escanear el QR si hace falta.
+  - WhatsApp puede restringir numeros que envian muchos mensajes no
+    solicitados. Usalo para notificaciones a usuarios que esperan recibirlas,
+    no para envios masivos.

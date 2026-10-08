@@ -42,30 +42,9 @@ echo.
 echo [3/3] Configurando archivos de entorno (.env)...
 
 if not exist backend\.env (
-    echo Creando backend\.env...
-    (
-    echo DB_HOST=localhost
-    echo DB_NAME=email_marketing
-    echo DB_USER=postgres
-    echo DB_PASS=admin
-    echo DB_PORT=5432
-    echo.
-    echo EMAIL_SERVICE=gmail
-    echo.
-    echo # Configuración para GMAIL
-    echo GMAIL_USER=tu-correo@gmail.com
-    echo GMAIL_PASS=contrasena-de-aplicacion-gmail
-    echo GMAIL_FROM="Tu Nombre <tu-correo@gmail.com>"
-    echo.
-    echo # Configuración para SMTP (si EMAIL_SERVICE=smtp)
-    echo SMTP_HOST=mail.tudominio.com
-    echo SMTP_PORT=587
-    echo SMTP_SECURE=false
-    echo SMTP_USER=tu-usuario-smtp
-    echo SMTP_PASS=tu-contrasena-smtp
-    echo SMTP_FROM="Tu Nombre <tu-correo@smtp.com>"
-    ) > backend\.env
-    echo [OK] Archivo backend\.env creado.
+    echo Creando backend\.env desde backend\.env.example...
+    copy backend\.env.example backend\.env > nul
+    echo [OK] Archivo backend\.env creado con soporte de Notificaciones y Scheduler.
 ) else (
     echo [SKIP] El archivo backend\.env ya existe.
 )

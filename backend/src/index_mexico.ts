@@ -1,5 +1,6 @@
 import { getMexicoLeads, updateMexicoLeadStatus } from './database';
 import { sendMarketingEmail } from './services/mailer';
+import { notifier } from './services/notifier';
 
 // Función para pausar la ejecución (evitar bloqueos por spam)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -15,6 +16,9 @@ async function main() {
     console.log("No hay leads pendientes. Saliendo...");
     process.exit(0);
   }
+
+  // Notificar inicio por WhatsApp
+  await notifier.notifyCampaignStart('México', leads.length);
 
   const SLEEP_MS = parseInt(process.env.SLEEP_MS || '2000');
   let successCount = 0;
@@ -83,7 +87,19 @@ async function main() {
   console.log(`Errores: ${errorCount}`);
   console.log("=================================");
   
+  // Notificar fin de campaña por WhatsApp
+  await notifier.notifyCampaignFinished('México', {
+    total: leads.length,
+    success: successCount,
+    errors: errorCount,
+  });
+
   process.exit(0);
 }
 
-main().catch(console.error);
+main().catch(async (error) => {
+  console.error('Error fatal en campaña de México:', error);
+  await notifier.notifyCampaignStopped('México', 'Error no capturado durante el proceso de envío', error);
+  process.exit(1);
+});
+

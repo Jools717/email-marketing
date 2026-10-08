@@ -152,6 +152,27 @@ npm run dev
 ```
 *(Para producción utiliza: `npm run build && npm start`)*
 
+#### 🤖 Ejecución Automática Programada (Scheduler / Cron)
+El backend cuenta con un planificador basado en `node-cron` que ejecuta las campañas automáticamente en los días y horarios que configures en `.env`:
+```bash
+cd backend
+npm run scheduler
+```
+* **Variables en `.env`:**
+  * `CAMPAIGN_CRON_SCHEDULE="0 9 * * 1-5"` (por defecto: Lun-Vie 9:00 AM)
+  * `CAMPAIGN_COUNTRY="colombia"` (o `mexico`, o `both`)
+  * `CAMPAIGN_TIMEZONE="America/Bogota"`
+
+#### 📲 Notificaciones y Alertas por WhatsApp
+Integrado con el bot Chabito (`POST /api/notify`):
+- **Alerta automática si la campaña se detiene o falla.**
+- **Notificación al iniciar y al finalizar con el resumen del lote.**
+- **Prueba rápida de conexión:**
+  ```bash
+  cd backend
+  npm run notify:test
+  ```
+
 ### 3. Scripts de Utilidad y Pruebas (Backend)
 - **Enviar Correo de Prueba**: Envía correos de prueba de las dos plantillas de A/B testing (`marketing` y `asesor`) a tu dirección configurada para inspección:
   ```bash

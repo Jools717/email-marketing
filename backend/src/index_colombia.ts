@@ -6,6 +6,7 @@ import {
   countRecentColombiaEmail1
 } from './database';
 import { sendMarketingEmail } from './services/mailer';
+import { notifier } from './services/notifier';
 
 // Función para pausar la ejecución (evitar bloqueos por spam)
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
@@ -32,6 +33,8 @@ async function main() {
     console.log(`\n📝 Se detectaron ${leadsEmail2.length} leads aptos para recibir el Email 2 (seguimiento cruzado).`);
     console.log(`👉 Iniciando el envío del Email 2 (Invertido/Cruzado)...`);
     
+    await notifier.notifyCampaignStart('Colombia (Email 2 Cruzado)', leadsEmail2.length);
+
     let asesorSuccess = 0;   // Enviados como asesor (antes asesor_b)
     let asesorBSuccess = 0;  // Enviados como asesor_b (antes asesor)
     let errorCount = 0;
@@ -118,6 +121,12 @@ async function main() {
     console.log(`❌ Errores de envío: ${errorCount}`);
     console.log("=================================");
     
+    await notifier.notifyCampaignFinished('Colombia (Email 2 Cruzado)', {
+      total: leadsEmail2.length,
+      success: asesorSuccess + asesorBSuccess,
+      errors: errorCount,
+    });
+    
   } else if (email1RecentCount > 0 && email1RecentCount < BATCH_LIMIT) {
     // === CASO 2: Reanudación de Email 1 Interrumpido ===
     // Se enviaron correos recientemente pero no llegamos a la meta de 600. Reanudamos Email 1.
@@ -132,6 +141,8 @@ async function main() {
       console.log("No hay leads pendientes en la base de datos para reanudar el lote. Saliendo...");
       process.exit(0);
     }
+
+    await notifier.notifyCampaignStart('Colombia (Reanudación Email 1)', leadsEmail1.length);
     
     let successCount = 0;
     let errorCount = 0;
@@ -207,6 +218,12 @@ async function main() {
     console.log(`❌ Errores: ${errorCount}`);
     console.log("=================================");
     
+    await notifier.notifyCampaignFinished('Colombia (Reanudación Email 1)', {
+      total: leadsEmail1.length,
+      success: successCount,
+      errors: errorCount,
+    });
+    
   } else if (email1RecentCount >= BATCH_LIMIT) {
     // === CASO 3: Lote del día ya completado ===
     // Ya enviamos los 600 Email 1 recientemente y los Email 2 aún deben esperar el plazo de 24 horas.
@@ -226,6 +243,8 @@ async function main() {
       console.log("No hay leads pendientes en la base de datos para iniciar un nuevo lote. Saliendo...");
       process.exit(0);
     }
+
+    await notifier.notifyCampaignStart('Colombia (Email 1 Nuevo Lote)', leadsEmail1.length);
     
     let successCount = 0;
     let errorCount = 0;
@@ -300,11 +319,22 @@ async function main() {
     console.log(`✅ Éxitos: ${successCount}`);
     console.log(`❌ Errores: ${errorCount}`);
     console.log("=================================");
+    
+    await notifier.notifyCampaignFinished('Colombia (Email 1 Nuevo Lote)', {
+      total: leadsEmail1.length,
+      success: successCount,
+      errors: errorCount,
+    });
   }
   
   process.exit(0);
 }
 
-main().catch(console.error);
+main().catch(async (error) => {
+  console.error('Error fatal en campaña de Colombia:', error);
+  await notifier.notifyCampaignStopped('Colombia', 'Error no capturado durante el proceso de envío', error);
+  process.exit(1);
+});
+
 
 

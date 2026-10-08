@@ -50,10 +50,10 @@ function getFriendlyName(nombreEmpresa, nombreComercial) {
 function generarIntroduccionColombiaAsesor(lead) {
     const nombre = getFriendlyName(lead.nombre_empresa, lead.nombre_comercial);
     const openings = [
-        `Estuve revisando la trayectoria de <strong>${nombre}</strong> y me pareció muy interesante su foco en el sector de <strong>{{sector}}</strong>, especialmente con su línea de <strong>{{productos}}</strong>.`,
-        `Hace poco me topé con el trabajo que vienen haciendo en <strong>${nombre}</strong>. Vi que están especializados en <strong>{{sector}}</strong> y que manejan un portafolio de <strong>{{productos}}</strong> bastante fuerte.`,
-        `Estuve investigando un poco sobre <strong>${nombre}</strong> y quería felicitarlos por su posicionamiento en el mercado de <strong>{{sector}}</strong>, comercializando productos como <strong>{{productos}}</strong>.`,
-        `Curioseando sobre empresas destacadas en el sector de <strong>{{sector}}</strong>, encontré a <strong>${nombre}</strong>. Me llamó mucho la atención su oferta de <strong>{{productos}}</strong>.`
+        `Te cuento que estuve mirando lo que hacen en <strong>${nombre}</strong> y me llamó la atención su enfoque en <strong>{{sector}}</strong>, especialmente con los productos de <strong>{{productos}}</strong>.`,
+        `Llegué al perfil de <strong>${nombre}</strong> y me pareció muy interesante el trabajo que están haciendo en el sector de <strong>{{sector}}</strong> con su línea de <strong>{{productos}}</strong>.`,
+        `Estaba buscando empresas clave de <strong>{{sector}}</strong> y di con <strong>${nombre}</strong>. Me gustó mucho el catálogo que manejan de <strong>{{productos}}</strong>.`,
+        `Estuve revisando a <strong>${nombre}</strong> y me pareció muy destacable el posicionamiento que tienen en <strong>{{sector}}</strong> distribuyendo <strong>{{productos}}</strong>.`
     ];
     const idx = Math.abs(lead.id || 0) % openings.length;
     let intro = openings[idx];
@@ -64,18 +64,18 @@ function generarIntroduccionColombiaAsesor(lead) {
             .replace(new RegExp(`^${lead.nombre_empresa}\\s+(es una|es un|es|son una|son un|son)\\s+`, 'i'), '')
             .replace(/^[A-Z]/, (match) => match.toLowerCase());
         const comments = [
-            ` Por lo que vi, ${cleanDesc}`,
-            ` Noté que se destacan por ser ${cleanDesc}`,
-            ` Me pareció genial ver que ${cleanDesc}`
+            ` Además, vi que ${cleanDesc}, lo cual me parece un gran diferencial.`,
+            ` Por lo que leí, entiendo que son ${cleanDesc}. ¡Muy buen trabajo!`,
+            ` Me di cuenta también de que ${cleanDesc}.`
         ];
         const commentIdx = Math.abs((lead.id || 0) + 1) % comments.length;
         intro += comments[commentIdx];
     }
     else {
         const fallbacks = [
-            ` Me llamó la atención el posicionamiento que han logrado construir y el crecimiento continuo dentro de su mercado.`,
-            ` Se nota que han hecho un gran trabajo estructurando su canal de ventas y ganando visibilidad frente a la competencia.`,
-            ` Vi que tienen un gran alcance en su canal de distribución y eso habla muy bien de su operación.`
+            ` Se nota el esfuerzo que han puesto en estructurar su canal de ventas.`,
+            ` Tienen un alcance súper interesante en el mercado frente a la competencia.`,
+            ` Se ve que han construido una operación muy sólida.`
         ];
         const fallbackIdx = Math.abs((lead.id || 0) + 2) % fallbacks.length;
         intro += fallbacks[fallbackIdx];

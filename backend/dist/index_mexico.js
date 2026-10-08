@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const database_1 = require("./database");
 const mailer_1 = require("./services/mailer");
+const notifier_1 = require("./services/notifier");
 // Función para pausar la ejecución (evitar bloqueos por spam)
 const sleep = (ms) => new Promise(resolve => setTimeout(resolve, ms));
 async function main() {
@@ -13,6 +14,8 @@ async function main() {
         console.log("No hay leads pendientes. Saliendo...");
         process.exit(0);
     }
+    // Notificar inicio por WhatsApp
+    await notifier_1.notifier.notifyCampaignStart('México', leads.length);
     const SLEEP_MS = parseInt(process.env.SLEEP_MS || '2000');
     let successCount = 0;
     let errorCount = 0;
@@ -64,6 +67,16 @@ async function main() {
     console.log(`Correos exitosos: ${successCount}`);
     console.log(`Errores: ${errorCount}`);
     console.log("=================================");
+    // Notificar fin de campaña por WhatsApp
+    await notifier_1.notifier.notifyCampaignFinished('México', {
+        total: leads.length,
+        success: successCount,
+        errors: errorCount,
+    });
     process.exit(0);
 }
-main().catch(console.error);
+main().catch(async (error) => {
+    console.error('Error fatal en campaña de México:', error);
+    await notifier_1.notifier.notifyCampaignStopped('México', 'Error no capturado durante el proceso de envío', error);
+    process.exit(1);
+});

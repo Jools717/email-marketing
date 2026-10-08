@@ -8,6 +8,10 @@
     "dev": "ts-node src/index.ts",
     "campaign:mexico": "ts-node src/index_mexico.ts",
     "campaign:colombia": "ts-node src/index_colombia.ts",
+    "scheduler": "ts-node src/scheduler.ts",
+    "start:scheduler": "node dist/scheduler.js",
+    "notify:test": "ts-node src/test_notify.ts",
+    "test:db": "ts-node src/test_db.ts",
     "test": "ts-node src/test-email.ts",
     "build": "tsc"
   },
@@ -15,11 +19,13 @@
     "csv-parser": "^3.2.0",
     "dotenv": "^16.3.1",
     "iconv-lite": "^0.7.2",
+    "node-cron": "^3.0.3",
     "nodemailer": "^6.9.7",
     "pg": "^8.11.3"
   },
   "devDependencies": {
     "@types/node": "^20.10.0",
+    "@types/node-cron": "^3.0.11",
     "@types/nodemailer": "^6.4.14",
     "@types/pg": "^8.10.9",
     "ts-node": "^10.9.1",
