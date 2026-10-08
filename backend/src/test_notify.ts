@@ -9,16 +9,18 @@ async function testNotification() {
   console.log('==============================================');
 
   const endpoint = process.env.NOTIFY_ENDPOINT_URL || 'http://localhost:3000/api/notify';
-  const phone = process.env.NOTIFY_PHONE || '(no configurado)';
   const hasToken = !!(process.env.CHABITO_ADMIN_TOKEN || process.env.ADMIN_TOKEN || process.env.NOTIFY_ADMIN_TOKEN);
+  const rawPhones = process.env.NOTIFY_PHONE || process.env.NOTIFY_PHONES || '';
+  const phoneList = rawPhones.split(/[,;\n]+/).map(p => p.trim()).filter(Boolean);
 
   console.log(`📡 URL del endpoint: ${endpoint}`);
-  console.log(`📱 Teléfono destino: ${phone}`);
+  console.log(`📱 Teléfono(s) destino [${phoneList.length}]: ${phoneList.length > 0 ? phoneList.join(', ') : '(no configurado)'}`);
   console.log(`🔑 Token configurado: ${hasToken ? 'Sí' : 'No'}\n`);
 
-  if (!process.env.NOTIFY_PHONE) {
+  if (phoneList.length === 0) {
     console.error('❌ Falta la variable NOTIFY_PHONE en tu archivo .env.');
-    console.log('Ejemplo: NOTIFY_PHONE=+573001234567\n');
+    console.log('Ejemplo para un número: NOTIFY_PHONE=573229457553');
+    console.log('Ejemplo para múltiples números: NOTIFY_PHONE=573229457553, 573001234567\n');
     process.exit(1);
   }
 
@@ -43,10 +45,10 @@ async function testNotification() {
     }
   }
 
-  process.exit(result.success ? 0 : 1);
+  process.exitCode = result.success ? 0 : 1;
 }
 
 testNotification().catch(err => {
   console.error('Error inesperado:', err);
-  process.exit(1);
+  process.exitCode = 1;
 });

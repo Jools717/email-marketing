@@ -8,6 +8,7 @@ exports.queryWithRetry = queryWithRetry;
 exports.getMexicoLeads = getMexicoLeads;
 exports.updateMexicoLeadStatus = updateMexicoLeadStatus;
 exports.getColombiaLeads = getColombiaLeads;
+exports.countPendingColombiaLeads = countPendingColombiaLeads;
 exports.updateColombiaLeadStatus = updateColombiaLeadStatus;
 exports.getMexicoLeadsForEmail2 = getMexicoLeadsForEmail2;
 exports.updateLeadStatusEmail2 = updateLeadStatusEmail2;
@@ -83,6 +84,16 @@ async function getColombiaLeads(limit = 100) {
   `;
     const result = await queryWithRetry(query, [limit]);
     return result.rows;
+}
+async function countPendingColombiaLeads() {
+    const query = `
+    SELECT COUNT(*)::integer as count 
+    FROM "empresas_leads_colombia"
+    WHERE emails IS NOT NULL AND emails != ''
+    AND (email_1_status IS NULL OR email_1_status = 'pendiente' OR email_1_status = 'error')
+  `;
+    const result = await queryWithRetry(query);
+    return result.rows[0].count || 0;
 }
 async function updateColombiaLeadStatus(id, status, template, error) {
     const query = `

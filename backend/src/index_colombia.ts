@@ -3,7 +3,8 @@ import {
   updateColombiaLeadStatus, 
   getColombiaLeadsForEmail2, 
   updateColombiaLeadStatusEmail2,
-  countRecentColombiaEmail1
+  countRecentColombiaEmail1,
+  countPendingColombiaLeads
 } from './database';
 import { sendMarketingEmail } from './services/mailer';
 import { notifier } from './services/notifier';
@@ -234,15 +235,31 @@ async function main() {
   } else {
     // === CASO 4: Iniciar un nuevo lote desde cero (Email 1) ===
     // No hay envíos recientes y no hay nada pendiente para Email 2.
-    console.log(`\n🎉 No hay campañas recientes ni envíos de Email 2 pendientes. Iniciando un NUEVO lote de 600 leads con el Email 1 (A/B)...`);
+    console.log(`\n🎉 No hay campañas recientes ni envíos de Email 2 pendientes. Verificando disponibilidad de nuevo lote de ${BATCH_LIMIT} leads (Email 1)...`);
     
-    const leadsEmail1 = await getColombiaLeads(BATCH_LIMIT);
-    console.log(`Se encontraron ${leadsEmail1.length} leads nuevos listos para procesar.`);
-    
-    if (leadsEmail1.length === 0) {
-      console.log("No hay leads pendientes en la base de datos para iniciar un nuevo lote. Saliendo...");
+    // Verificar si el scraper ya recolectó al menos los 600 leads requeridos
+    const pendingLeadsCount = await countPendingColombiaLeads();
+    console.log(`📊 Leads pendientes en base de datos recolectados por el scraper: ${pendingLeadsCount} de ${BATCH_LIMIT} requeridos.`);
+
+    if (pendingLeadsCount < BATCH_LIMIT) {
+      console.log(`\n⏳ [PAUSA POR FALTA DE LEADS - ESPERA DE SCRAPING]`);
+      console.log(`   Se requieren ${BATCH_LIMIT} leads para enviar un lote completo sin fragmentar la campaña.`);
+      console.log(`   Actualmente solo hay ${pendingLeadsCount} disponibles.`);
+      console.log(`   👉 El sistema esperará pacíficamente hasta la próxima ejecución a las 8:00 AM para dar tiempo al scraper de completar el lote.\n`);
+
+      // Enviar aviso informativo por WhatsApp para conocimiento del equipo
+      await notifier.sendWhatsApp(
+        `ℹ️ *Aviso Campaña Colombia (En Espera de Scraping)*\n` +
+        `📅 Fecha/Hora: ${new Date().toLocaleString()}\n` +
+        `📊 Leads acumulados por el scraper: *${pendingLeadsCount} / ${BATCH_LIMIT}*\n` +
+        `⏳ Se requiere el lote completo de ${BATCH_LIMIT} leads. El sistema esperará hasta la próxima ejecución (8:00 AM) para que el scraper termine de recolectar los datos.`
+      );
+
       process.exit(0);
     }
+
+    const leadsEmail1 = await getColombiaLeads(BATCH_LIMIT);
+    console.log(`✅ Lote completo obtenido: ${leadsEmail1.length} leads nuevos listos para procesar.`);
 
     await notifier.notifyCampaignStart('Colombia (Email 1 Nuevo Lote)', leadsEmail1.length);
     

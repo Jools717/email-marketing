@@ -6,7 +6,7 @@ import { notifier } from './services/notifier';
 
 dotenv.config();
 
-const CRON_SCHEDULE = process.env.CAMPAIGN_CRON_SCHEDULE || '0 9 * * 1-5'; // Por defecto: Lunes a Viernes a las 9:00 AM
+const CRON_SCHEDULE = process.env.CAMPAIGN_CRON_SCHEDULE || '0 8 * * *'; // Por defecto: Todos los días a las 8:00 AM
 const TIMEZONE = process.env.CAMPAIGN_TIMEZONE || 'America/Bogota';
 const CAMPAIGN_COUNTRY = (process.env.CAMPAIGN_COUNTRY || 'colombia').toLowerCase();
 const RUN_ON_STARTUP = process.env.RUN_ON_STARTUP === 'true';
@@ -118,8 +118,8 @@ console.log('🤖 SISTEMA DE PROGRAMACIÓN AUTOMÁTICA (SCHEDULER)');
 console.log('======================================================');
 console.log(`🌍 País configurado: ${CAMPAIGN_COUNTRY.toUpperCase()}`);
 console.log(`📅 Expresión Cron: "${CRON_SCHEDULE}"`);
-console.log(`🌐 Zona Horaria: ${TIMEZONE}`);
-console.log(`📱 Notificaciones WhatsApp: ${process.env.NOTIFY_PHONE ? 'ACTIVAS (' + process.env.NOTIFY_PHONE + ')' : 'DESACTIVADAS (falta NOTIFY_PHONE)'}`);
+const configuredPhones = (process.env.NOTIFY_PHONE || process.env.NOTIFY_PHONES || '').split(/[,;\n]+/).map(p => p.trim()).filter(Boolean);
+console.log(`📱 Notificaciones WhatsApp: ${configuredPhones.length > 0 ? 'ACTIVAS (' + configuredPhones.join(', ') + ')' : 'DESACTIVADAS (falta NOTIFY_PHONE)'}`);
 console.log('======================================================\n');
 
 if (!cron.validate(CRON_SCHEDULE)) {

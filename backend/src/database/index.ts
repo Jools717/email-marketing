@@ -100,6 +100,17 @@ export async function getColombiaLeads(limit = 100): Promise<Lead[]> {
   return result.rows;
 }
 
+export async function countPendingColombiaLeads(): Promise<number> {
+  const query = `
+    SELECT COUNT(*)::integer as count 
+    FROM "empresas_leads_colombia"
+    WHERE emails IS NOT NULL AND emails != ''
+    AND (email_1_status IS NULL OR email_1_status = 'pendiente' OR email_1_status = 'error')
+  `;
+  const result = await queryWithRetry(query);
+  return result.rows[0].count || 0;
+}
+
 export async function updateColombiaLeadStatus(id: number, status: string, template: string, error?: string) {
   const query = `
     UPDATE "empresas_leads_colombia"
